@@ -13,6 +13,6 @@ In the natural world, organisms exhibit certain behaviors when traveling in grou
  - http://www.red3d.com/cwr/boids/
  - http://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf
  
- ## Authors
+## Authors
  - Gašper Kolar
  - Luka Prijatelj
