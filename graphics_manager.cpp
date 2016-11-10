@@ -43,7 +43,7 @@ Graphics_manager::Graphics_manager() {
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	glfwSetKeyCallback(window, key_callback);
 }
 
