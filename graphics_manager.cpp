@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <iostream>
 
+//glcolor3...
+//glVertex3f
+
 // Error callback function that gets called in case of errors by glfw
 static void error_callback(int error, const char* description) {
 	fprintf(stderr, "GLWF error [%d]: %s\n", error, description);
@@ -21,23 +24,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 // Constructor
 Graphics_manager::Graphics_manager() {
 	window = NULL;
-
 	glfwSetErrorCallback(error_callback);
-
-	if (!glfwInit()) {
-		fprintf(stderr, "ERROR: Could not start GLFW3\n");
+	if (!glfwInit())
 		exit(EXIT_FAILURE);
-	}
-
 	window = glfwCreateWindow(WINDOW_SIZE_X, WINDOW_SIZE_Y, WINDOW_NAME, NULL, NULL);
 	if (!window) {
-		fprintf(stderr, "ERROR: Could not create window.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
-	glfwSetKeyCallback(window, key_callback);
-
 	glfwMakeContextCurrent(window);
 
 	// Load all OpenGL functions using the glfw loader function
@@ -48,54 +42,9 @@ Graphics_manager::Graphics_manager() {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+
 	glfwSwapInterval(1);
-
-	float points[] = {
-		0.0f,  0.5f,  0.0f,
-		0.5f, -0.5f,  0.0f,
-		-0.5f, -0.5f,  0.0f
-	};
-	vbo = 0; // Virtual Buffer Array (VBO)
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW);
-
-	vao = 0; // Vertex Array Object (VAO)
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	const char* vertex_shader1 =
-		"#version 400\n"
-		"in vec3 vp;"
-		"void main() {"
-		"  gl_Position = vec4(vp, 1.0);"
-		"}";
-
-	const char* fragment_shader1 =
-		"#version 400\n"
-		"out vec4 frag_colour;"
-		"void main() {"
-		"  frag_colour = vec4(0.5, 0.0, 0.5, 1.0);"
-		"}";
-
-	// Compile vertex shader
-	vs = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vs, 1, &vertex_shader1, NULL);
-	glCompileShader(vs);
-
-	// Compile fragment shader
-	fs = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fs, 1, &fragment_shader1, NULL);
-	glCompileShader(fs);
-
-	// Create program from shaders
-	sp = glCreateProgram();
-	glAttachShader(sp, fs);
-	glAttachShader(sp, vs);
-	glLinkProgram(sp);
+	glfwSetKeyCallback(window, key_callback);
 }
 
 // Destructor
@@ -106,25 +55,52 @@ Graphics_manager::~Graphics_manager() {
 }
 
 
-void Graphics_manager::draw_bird(Bird *bird) {
-	// wipe the drawing surface clear
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(sp);
-	glBindVertexArray(vao);
-	// draw points 0-3 from the currently bound VAO with current in-use shader
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+void Graphics_manager::draw_birds(Bird **birds, int n) {
+	float ratio;
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	ratio = width / (float)height;
+	glViewport(0, 0, width, height);
+	glClearColor(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glMatrixMode(GL_MODELVIEW);
+	
+	// Draw the birds
+	for (int i = 0; i < n; i++) {
+		draw_bird(birds[i]);
+	}
+
 	return;
+}
+
+void Graphics_manager::draw_bird(Bird *bird) {
+	glPushMatrix();
+	glTranslatef(bird->getX(), bird->getY(), 0.0);
+	glRotatef(bird->getRotation(), 0, 0, 1);
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(bird->getColorR(), bird->getColorG(), bird->getColorB());
+	glVertex3f(-0.02f, -0.02f, 0.00f);
+	glVertex3f( 0.02f, -0.02f, 0.00f);
+	glColor3f(1.f, 0.f, 1.f);
+	glVertex3f( 0.00f, +0.03f, 0.00f);
+	glEnd();
+	
+	glPopMatrix();
 }
 
 
 bool Graphics_manager::loop() {
+	glfwPollEvents();
 	if (glfwWindowShouldClose(window))
 		return false;
-
-	draw_bird(NULL);
-
-	// Perform one loop
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+	
 	return true;
+}
+
+void Graphics_manager::swap_buffers() {
+	glfwSwapBuffers(window);
 }
