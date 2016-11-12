@@ -3,3 +3,12 @@
 ################################################################################
 
 /packages.config
+/packages
+/Debug
+/ConsoleApplication1.vcxproj.user
+/ConsoleApplication1.vcxproj.filters
+/ConsoleApplication1.vcxproj
+/ConsoleApplication1.VC.VC.opendb
+/ConsoleApplication1.VC.db
+/ConsoleApplication1.sln
+/.vs/ConsoleApplication1/v14
