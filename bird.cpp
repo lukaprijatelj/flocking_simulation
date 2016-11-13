@@ -146,6 +146,8 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 	alignment.x /= local_birds_count;
 	alignment.y /= local_birds_count;
 	alignment.normalize(1);
+
+	// TODO: Gašper - mislm da tale vrstica 151 ni prav. To sem dodal, èeprav je na spletni strani ni blo. Ker nevem kako drugaèe premikati position.
 	nextPosition = alignment;
 	
 	// cohesion

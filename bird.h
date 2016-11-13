@@ -5,7 +5,7 @@
 #include "Color.h"
 
 #define LOCAL_DISTANCE 1
-#define BIRD_SPEED 0.00000000000000000001
+#define BIRD_SPEED 1
 
 class Bird
 {
