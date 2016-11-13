@@ -1,23 +1,36 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <math.h>
+#include "Vector.h"
+#include "Color.h"
 
-#define LOCAL_DISTANCE 0.5
+#define LOCAL_DISTANCE 1
+#define BIRD_SPEED 0.00000000000000000001
 
 class Bird
 {
-	float position[2];
-	float velocity[2];
-	float rotation;
-	float color[3];
+private:
+	Vector nextPosition;
+	Vector nextVelocity;
+	float nextRotation;
+
 public:
+	Vector position;
+	Vector velocity;
+	float rotation;
+	Color color;
 	Bird();
 	~Bird();
 	void report();
 
 	void setX(float val);
 	void setY(float val);
+	void setVelX(float val);
+	void setVelY(float val);
 	void setRotation(float val);
 	void setPosition(float x, float y);
+
+	void swapNextValues();
 
 	float getX();
 	float getY();
@@ -28,8 +41,8 @@ public:
 	float getColorG();
 	float getColorB();
 
-	float distance(Bird*);
+	void compute_new_position(Bird **, int);
 
-	void positionInFlock(Bird**, int);
+	float distanceFrom(Bird*);
 };
 

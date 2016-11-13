@@ -3,35 +3,55 @@
 
 
 Bird::Bird() {
-	for (int i = 0; i < 2; i++) {
-		position[i] = 0.0f;
-		velocity[i] = 0.0f;
-	}
-	color[0] = 0.30f; // R
-	color[1] = 0.00f; // G
-	color[2] = 1.00f; // B
+	position.x = 0.0f;
+	position.y = 0.0f;
+	nextPosition.x = 0.0f;
+	nextPosition.y = 0.0f;
+
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	nextVelocity.x = 0.0f;
+	nextVelocity.y = 0.0f;
+
+	color.red = 0.30f; 
+	color.green = 0.00f;
+	color.blue = 1.00f;
+
 	rotation = 0.0f;
+	nextRotation = 0.0f;
 }
 
 Bird::~Bird(){}
 
 void Bird::report(){
 	printf("Bird vector: ");
-	printf("[%.2f", position[0]);
-	for (int i = 1; i < 2; i++) 
-		printf(", %.2f", position[i]);
-	printf("] velocity: [%.2f", velocity[0]);
-	for (int i = 1; i < 2; i++)
-		printf(", %.2f", velocity[i]);
+
+	// Position
+	printf("[%.2f", position.x);
+	printf(", %.2f", position.y);
+
+	// Velocity
+	printf("] velocity: [%.2f", velocity.x);
+	printf(", %.2f", velocity.y);
+
+	// Rotation
 	printf("] rotation: %.2f\n", rotation);
 }
 
 void Bird::setX(float val) {
-	position[0] = val;
+	position.x = val;
 }
 
 void Bird::setY(float val) {
-	position[1] = val;
+	position.y = val;
+}
+
+void Bird::setVelX(float val) {
+	velocity.x = val;
+}
+
+void Bird::setVelY(float val) {
+	velocity.y = val;
 }
 
 void Bird::setRotation(float val) {
@@ -39,24 +59,24 @@ void Bird::setRotation(float val) {
 }
 
 void Bird::setPosition(float x, float y) {
-	position[0] = x;
-	position[1] = y;
+	position.x = x;
+	position.y = y;
 }
 
 float Bird::getX() {
-	return position[0];
+	return position.x;
 }
 
 float Bird::getY() {
-	return position[1];
+	return position.y;
 }
 
 float Bird::getVelX() {
-	return velocity[0];
+	return velocity.x;
 }
 
 float Bird::getVelY() {
-	return velocity[1];
+	return velocity.y;
 }
 
 float Bird::getRotation() {
@@ -64,51 +84,94 @@ float Bird::getRotation() {
 }
 
 float Bird::getColorR() {
-	return color[0];
+	return color.red;
 }
 
 float Bird::getColorG() {
-	return color[1];
+	return color.green;
 }
 
 float Bird::getColorB() {
-	return color[2];
+	return color.blue;
 }
 
-float Bird::distance(Bird *other) {
-	return sqrt(((position[0] - other->getX()) * (position[0] - other->getX())) + ((position[1] - other->getY()) * (position[1] - other->getY())));
+float Bird::distanceFrom(Bird *other) {
+	return sqrt(((position.x - other->getX()) * (position.x - other->getX())) + ((position.y - other->getY()) * (position.y - other->getY())));
 }
 
-void Bird::positionInFlock(Bird **birds, int n) {
-	float alignment[2], cohesion[2], seperatation[2];
+void Bird::swapNextValues() {
+	position = nextPosition;
+	velocity = nextVelocity;
+	rotation = nextRotation;
+}
+
+void Bird::compute_new_position(Bird **birdArray, int n) {
+	Vector alignment = Vector();
+	Vector cohesion = Vector();
+	Vector separation = Vector();
 	int local_birds_count = 0;
-	for (int  i = 0; i < 2; i++) {
-		alignment[i] = 0.f;
-		cohesion[i] = 0.f;
-		seperatation[i] = 0.f;
-	}
 
-	for (int  i = 0; i < n; i++) {
-		if (birds[i] != this) {
-			if (distance(birds[i]) < LOCAL_DISTANCE) {
+	for (int i = 0; i < n; i++)
+	{
+		Bird *bird = birdArray[i];
+
+		if (bird != this)
+		{
+			if (distanceFrom(bird) < LOCAL_DISTANCE)
+			{
+				// allignment
+				alignment.x += (*bird).velocity.x;
+				alignment.y += (*bird).velocity.y;
+
+				// cohesion
+				cohesion.x += (*bird).position.x;
+				cohesion.y += (*bird).position.y;
+
+				// separation
+				separation.x += (*bird).position.x - position.x;
+				separation.y += (*bird).position.y - position.y;
+
 				local_birds_count++;
-
-				alignment[0] += birds[i]->getVelX();
-				alignment[1] += birds[i]->getVelY();
-
-				cohesion[0] += birds[i]->getX();
-				cohesion[1] += birds[i]->getY();
-
-				seperatation[0] += birds[i]->getX() - getX();
-				seperatation[1] += birds[i]->getY() - getY();
 			}
 		}
 	}
 
-	if (local_birds_count == 0)
+	// if no birds around than just move in current direction
+	if (local_birds_count == 0) {
+		nextPosition = alignment;
 		return;
+	}
 
+	// allignment
+	alignment.x /= local_birds_count;
+	alignment.y /= local_birds_count;
+	alignment.normalize(1);
+	nextPosition = alignment;
+	
+	// cohesion
+	cohesion.x /= local_birds_count;
+	cohesion.y /= local_birds_count;
+	cohesion = Vector(cohesion.x - position.x, cohesion.y - position.y);
+	cohesion.normalize(1);
 
+	// separation
+	separation.x *= -1;
+	separation.y *= -1;
+
+	// putting it all together
+	nextVelocity.x = velocity.x + alignment.x + cohesion.x + separation.x;
+	nextVelocity.y = velocity.y + alignment.y + cohesion.y + separation.y;
+	nextVelocity.normalize(BIRD_SPEED);
+
+	// calculate rotation for correct bird drawing
+	if (nextVelocity.x == 0) {
+		if (nextVelocity.y >= 0)
+			nextRotation = 0;
+		else
+			nextRotation = 90;
+	}
+	else
+		nextRotation = atan(nextVelocity.y / nextVelocity.x) * 180 / M_PI;
 
 	return;
 }
