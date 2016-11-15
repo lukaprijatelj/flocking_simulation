@@ -120,16 +120,16 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 			if (distanceFrom(bird) < LOCAL_DISTANCE)
 			{
 				// allignment
-				alignment.x += (*bird).velocity.x;
-				alignment.y += (*bird).velocity.y;
+				alignment.x += bird->velocity.x;
+				alignment.y += bird->velocity.y;
 
 				// cohesion
-				cohesion.x += (*bird).position.x;
-				cohesion.y += (*bird).position.y;
+				cohesion.x += bird->position.x;
+				cohesion.y += bird->position.y;
 
 				// separation
-				separation.x += (*bird).position.x - position.x;
-				separation.y += (*bird).position.y - position.y;
+				separation.x += bird->position.x - position.x;
+				separation.y += bird->position.y - position.y;
 
 				local_birds_count++;
 			}
@@ -138,7 +138,8 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 
 	// if no birds around than just move in current direction
 	if (local_birds_count == 0) {
-		nextPosition = alignment;
+		nextPosition.x = position.x + velocity.x;
+		nextPosition.y = position.y + velocity.y;
 		return;
 	}
 
@@ -146,9 +147,6 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 	alignment.x /= local_birds_count;
 	alignment.y /= local_birds_count;
 	alignment.normalize(1);
-
-	// TODO: Gašper - mislm da tale vrstica 151 ni prav. To sem dodal, èeprav je na spletni strani ni blo. Ker nevem kako drugaèe premikati position.
-	nextPosition = alignment;
 	
 	// cohesion
 	cohesion.x /= local_birds_count;
@@ -157,23 +155,35 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 	cohesion.normalize(1);
 
 	// separation
+	separation.x /= local_birds_count;
+	separation.y /= local_birds_count;
 	separation.x *= -1;
 	separation.y *= -1;
+	separation = Vector(separation.x - position.x, separation.y - position.y);
+	separation.normalize(1.0f);
 
 	// putting it all together
-	nextVelocity.x = velocity.x + alignment.x + cohesion.x + separation.x;
-	nextVelocity.y = velocity.y + alignment.y + cohesion.y + separation.y;
+	nextVelocity.x = velocity.x + alignment.x * ALLIGNMENT_WEIGHT + cohesion.x *COHESION_WEIGHT + separation.x * SEPARATION_WEIGHT;
+	nextVelocity.y = velocity.y + alignment.y *ALLIGNMENT_WEIGHT + cohesion.y *COHESION_WEIGHT + separation.y * SEPARATION_WEIGHT;
 	nextVelocity.normalize(BIRD_SPEED);
+
+
+	nextPosition.x = position.x + nextVelocity.x;
+	nextPosition.y = position.y + nextVelocity.y;
+
+
 
 	// calculate rotation for correct bird drawing
 	if (nextVelocity.x == 0) {
 		if (nextVelocity.y >= 0)
-			nextRotation = 0;
+			nextRotation = 0;  // Ne sme biti
 		else
-			nextRotation = 90;
+			nextRotation = 270;
 	}
 	else
 		nextRotation = atan(nextVelocity.y / nextVelocity.x) * 180 / M_PI;
+
+	nextRotation -= 90;
 
 	return;
 }

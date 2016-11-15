@@ -4,8 +4,11 @@
 #include "Vector.h"
 #include "Color.h"
 
-#define LOCAL_DISTANCE 1
-#define BIRD_SPEED 1
+#define ALLIGNMENT_WEIGHT 0.3
+#define COHESION_WEIGHT 0.01
+#define SEPARATION_WEIGHT 0.4
+#define LOCAL_DISTANCE 0.3
+#define BIRD_SPEED 0.0001
 
 class Bird
 {

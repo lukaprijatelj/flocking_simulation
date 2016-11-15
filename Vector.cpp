@@ -4,6 +4,8 @@
 
 Vector::Vector()
 {
+	x = 0;
+	y = 0;
 }
 
 Vector::Vector(float newX, float newY)
