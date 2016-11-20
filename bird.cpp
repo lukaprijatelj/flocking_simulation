@@ -163,20 +163,19 @@ void Bird::compute_new_position(Bird **birdArray, int n) {
 	separation.normalize(1.0f);
 
 	// putting it all together
-	nextVelocity.x = velocity.x + alignment.x * ALLIGNMENT_WEIGHT + cohesion.x *COHESION_WEIGHT + separation.x * SEPARATION_WEIGHT;
-	nextVelocity.y = velocity.y + alignment.y *ALLIGNMENT_WEIGHT + cohesion.y *COHESION_WEIGHT + separation.y * SEPARATION_WEIGHT;
+	nextVelocity.x = velocity.x + alignment.x * ALLIGNMENT_WEIGHT + cohesion.x * COHESION_WEIGHT + separation.x * SEPARATION_WEIGHT;
+	nextVelocity.y = velocity.y + alignment.y * ALLIGNMENT_WEIGHT + cohesion.y * COHESION_WEIGHT + separation.y * SEPARATION_WEIGHT;
 	nextVelocity.normalize(BIRD_SPEED);
 
-
+	// change nextPosition
 	nextPosition.x = position.x + nextVelocity.x;
 	nextPosition.y = position.y + nextVelocity.y;
-
 
 
 	// calculate rotation for correct bird drawing
 	if (nextVelocity.x == 0) {
 		if (nextVelocity.y >= 0)
-			nextRotation = 0;  // Ne sme biti
+			nextRotation = 90;  // x=0 and y=0 must not happen. This is should not be allowed.
 		else
 			nextRotation = 270;
 	}
