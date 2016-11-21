@@ -25,20 +25,26 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 Graphics_manager::Graphics_manager() {
 	window = NULL;
 	glfwSetErrorCallback(error_callback);
+
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
+
 	window = glfwCreateWindow(WINDOW_SIZE_X, WINDOW_SIZE_Y, WINDOW_NAME, NULL, NULL);
+
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+
 	glfwMakeContextCurrent(window);
 
 	// Load all OpenGL functions using the glfw loader function
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		fprintf(stderr, "ERROR: Failed to initialize OpenGL context.\n");
+
 		if (window != NULL)
 			glfwDestroyWindow(window);
+
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -51,21 +57,27 @@ Graphics_manager::Graphics_manager() {
 Graphics_manager::~Graphics_manager() {
 	if (window != NULL)
 		glfwDestroyWindow(window);
+
 	glfwTerminate();
 }
 
+Dimension Graphics_manager::getDimensions() {
+	return Dimension(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+}
 
 void Graphics_manager::draw_birds(Bird **birds, int n) {
 	float ratio;
 	int width, height;
+
 	glfwGetFramebufferSize(window, &width, &height);
 	ratio = width / (float)height;
+
 	glViewport(0, 0, width, height);
 	glClearColor(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glOrtho(-width/2, width/2, -height/2, height/2, 1.f, -1.f);
 	glMatrixMode(GL_MODELVIEW);
 	
 	// Draw the birds
@@ -78,15 +90,15 @@ void Graphics_manager::draw_birds(Bird **birds, int n) {
 
 void Graphics_manager::draw_bird(Bird *bird) {
 	glPushMatrix();
-	glTranslatef(bird->getX(), bird->getY(), 0.0);
-	glRotatef(bird->getRotation(), 0, 0, 1);
+	glTranslatef(bird->position.x, bird->position.y, 0.0);
+	glRotatef(bird->rotation, 0, 0, 1);
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(bird->getColorR(), bird->getColorG(), bird->getColorB());
-	glVertex3f(-0.02f, -0.02f, 0.00f);
-	glVertex3f( 0.02f, -0.02f, 0.00f);
+	glColor3f(bird->color.red, bird->color.green, bird->color.blue);
+	glVertex3f(-4.0f, -4.0f, 0.00f);
+	glVertex3f( 4.0f, -4.0f, 0.00f);
 	glColor3f(1.f, 0.f, 1.f);
-	glVertex3f( 0.00f, +0.03f, 0.00f);
+	glVertex3f(0.00f, 5.0f, 0.00f);
 	glEnd();
 	
 	glPopMatrix();

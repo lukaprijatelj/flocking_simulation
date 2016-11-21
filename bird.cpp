@@ -2,28 +2,24 @@
 #include <stdio.h>
 
 
-Bird::Bird() {
-	position.x = 0.0f;
-	position.y = 0.0f;
-	nextPosition.x = 0.0f;
-	nextPosition.y = 0.0f;
+Bird::Bird(Dimension win) 
+{
+	window_dimensions = win;
 
-	velocity.x = 0.0f;
-	velocity.y = 0.0f;
-	nextVelocity.x = 0.0f;
-	nextVelocity.y = 0.0f;
+	position = Vector();
+	acceleration = Vector();
+	velocity = Vector();
+	rotation = 0.0f;
 
-	color.red = 0.30f; 
+	color.red = 0.30f;
 	color.green = 0.00f;
 	color.blue = 1.00f;
-
-	rotation = 0.0f;
-	nextRotation = 0.0f;
 }
 
-Bird::~Bird(){}
+Bird::~Bird() {}
 
-void Bird::report(){
+void Bird::report() 
+{
 	printf("Bird vector: ");
 
 	// Position
@@ -38,151 +34,216 @@ void Bird::report(){
 	printf("] rotation: %.2f\n", rotation);
 }
 
-void Bird::setX(float val) {
-	position.x = val;
+// Separation
+// Method checks for nearby boids and steers away
+Vector Bird::separate(Bird **birdArray, int n) 
+{
+	Vector steer = Vector(0, 0);
+	int count = 0;
+
+	// For every boid in the system, check if it's too close
+	for (int i = 0; i < n; i++)
+	{
+		Bird *bird = birdArray[i];
+		float d = Vector::distance(position, bird->position);
+
+		// If the distance is 0, than this bird is same
+		if (d == 0)
+			continue;
+
+		if (d < SEPARATION_DISTANCE) {
+			// Calculate vector pointing away from neighbor
+			Vector diff = Vector::subtract(position, bird->position);
+			diff.normalize(1.0f);
+
+			// Weight by distance
+			diff.divide(d);        
+			steer.add(diff);
+			count++;           
+		}
+	}
+
+	// Divide with how many birds are in local flock
+	if (count > 0) {
+		steer.divide((float)count);
+	}
+
+	if (steer.length() > 0) {
+		// Implement Reynolds: 
+		// Steering = Desired - Velocity
+		steer.normalize(1.0f);
+		steer.multiply(MAX_SPEED);
+		steer.subtract(velocity);
+		steer.limit(MAX_FORCE);
+	}
+	return steer;
 }
 
-void Bird::setY(float val) {
-	position.y = val;
-}
-
-void Bird::setVelX(float val) {
-	velocity.x = val;
-}
-
-void Bird::setVelY(float val) {
-	velocity.y = val;
-}
-
-void Bird::setRotation(float val) {
-	rotation = val;
-}
-
-void Bird::setPosition(float x, float y) {
-	position.x = x;
-	position.y = y;
-}
-
-float Bird::getX() {
-	return position.x;
-}
-
-float Bird::getY() {
-	return position.y;
-}
-
-float Bird::getVelX() {
-	return velocity.x;
-}
-
-float Bird::getVelY() {
-	return velocity.y;
-}
-
-float Bird::getRotation() {
-	return rotation;
-}
-
-float Bird::getColorR() {
-	return color.red;
-}
-
-float Bird::getColorG() {
-	return color.green;
-}
-
-float Bird::getColorB() {
-	return color.blue;
-}
-
-float Bird::distanceFrom(Bird *other) {
-	return sqrt(((position.x - other->getX()) * (position.x - other->getX())) + ((position.y - other->getY()) * (position.y - other->getY())));
-}
-
-void Bird::swapNextValues() {
-	position = nextPosition;
-	velocity = nextVelocity;
-	rotation = nextRotation;
-}
-
-void Bird::compute_new_position(Bird **birdArray, int n) {
-	Vector alignment = Vector();
-	Vector cohesion = Vector();
-	Vector separation = Vector();
-	int local_birds_count = 0;
+// Alignment
+// For every nearby boid in the system, calculate the average velocity
+Vector Bird::align(Bird **birdArray, int n) 
+{
+	Vector sum = Vector(0, 0);
+	int count = 0;
 
 	for (int i = 0; i < n; i++)
 	{
 		Bird *bird = birdArray[i];
+		float d = Vector::distance(position, bird->position);
 
-		if (bird != this)
-		{
-			if (distanceFrom(bird) < LOCAL_DISTANCE)
-			{
-				// allignment
-				alignment.x += bird->velocity.x;
-				alignment.y += bird->velocity.y;
+		// If the distance is 0, than this bird is same
+		if (d == 0)
+			continue;
 
-				// cohesion
-				cohesion.x += bird->position.x;
-				cohesion.y += bird->position.y;
-
-				// separation
-				separation.x += bird->position.x - position.x;
-				separation.y += bird->position.y - position.y;
-
-				local_birds_count++;
-			}
+		if (d < ALLIGNMENT_DISTANCE) {
+			sum.add(bird->velocity);
+			count++;
 		}
 	}
 
-	// if no birds around than just move in current direction
-	if (local_birds_count == 0) {
-		nextPosition.x = position.x + velocity.x;
-		nextPosition.y = position.y + velocity.y;
-		return;
+	Vector steer = Vector();
+
+	if (count > 0) {
+		sum.divide((float)count);
+
+		// Implement Reynolds: 
+		// Steering = Desired - Velocity
+		sum.normalize(1.0f);
+		sum.multiply(MAX_SPEED);
+		steer = Vector::subtract(sum, velocity);
+		steer.limit(MAX_FORCE);
+		
 	}
 
-	// allignment
-	alignment.x /= local_birds_count;
-	alignment.y /= local_birds_count;
-	alignment.normalize(1);
+	return steer;
+}
+
+// Cohesion
+// For the average position (i.e. center) of all nearby boids, calculate steering vector towards that position
+Vector Bird::cohesion(Bird **birdArray, int n) 
+{
+	Vector sum = Vector(0, 0);   
+	int count = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		Bird *bird = birdArray[i];
+		float d = Vector::distance(position, bird->position);
+
+		// If the distance is 0, than this bird is same
+		if (d == 0)
+			continue;
+
+		if (d < COHESION_DISTANCE) {
+			// Add position
+			sum.add(bird->position); 
+			count++;
+		}
+	}
+
+	Vector steerVector = Vector();
+
+	if (count > 0) {
+		sum.divide(count);
+
+		// Steer towards the position
+		steerVector = seek(sum);
+	}
 	
-	// cohesion
-	cohesion.x /= local_birds_count;
-	cohesion.y /= local_birds_count;
-	cohesion = Vector(cohesion.x - position.x, cohesion.y - position.y);
-	cohesion.normalize(1);
+	return steerVector;
+}
 
-	// separation
-	separation.x /= local_birds_count;
-	separation.y /= local_birds_count;
-	separation.x *= -1;
-	separation.y *= -1;
-	separation = Vector(separation.x - position.x, separation.y - position.y);
-	separation.normalize(1.0f);
+Vector Bird::seek(Vector target)
+{
+	// A vector pointing from the position to the target
+	Vector desired = Vector::subtract(target, position);  
+						
+	// Scale to maximum speed
+	desired.normalize(1.0f);
+	desired.multiply(MAX_SPEED);
 
-	// putting it all together
-	nextVelocity.x = velocity.x + alignment.x * ALLIGNMENT_WEIGHT + cohesion.x * COHESION_WEIGHT + separation.x * SEPARATION_WEIGHT;
-	nextVelocity.y = velocity.y + alignment.y * ALLIGNMENT_WEIGHT + cohesion.y * COHESION_WEIGHT + separation.y * SEPARATION_WEIGHT;
-	nextVelocity.normalize(BIRD_SPEED);
+	// Steering = Desired minus Velocity
+	Vector steer = Vector::subtract(desired, velocity);
 
-	// change nextPosition
-	nextPosition.x = position.x + nextVelocity.x;
-	nextPosition.y = position.y + nextVelocity.y;
+	// Limit to maximum steering force
+	steer.limit(MAX_FORCE);  
 
+	return steer;
+}
 
-	// calculate rotation for correct bird drawing
-	if (nextVelocity.x == 0) {
-		if (nextVelocity.y >= 0)
-			nextRotation = 90;  // x=0 and y=0 must not happen. This is should not be allowed.
-		else
-			nextRotation = 270;
-	}
-	else
-		nextRotation = atan(nextVelocity.y / nextVelocity.x) * 180 / M_PI;
+// We accumulate a new acceleration each time based on three rules
+void Bird::flock(Bird **birdArray, int n) 
+{
+	Vector sep = separate(birdArray, n);   
+	Vector ali = align(birdArray, n);     
+	Vector coh = cohesion(birdArray, n);  
 
-	nextRotation -= 90;
+	// Arbitrarily weight these forces
+	sep.multiply(SEPARATION_WEIGHT);
+	ali.multiply(ALLIGNMENT_WEIGHT);
+	coh.multiply(COHESION_WEIGHT);
 
-	return;
+	// Add the force vectors to acceleration
+	applyForce(sep);
+	applyForce(ali);
+	applyForce(coh);
+}
+
+void Bird::applyForce(Vector force) 
+{
+	acceleration.add(force);
+}
+
+void Bird::run(Bird **birdArray, int n) 
+{
+	// Calculate new position
+	flock(birdArray, n);
+
+	// Move bird
+	update();
+
+	// Rotate bird
+	rotate();
+
+	// Check for borders
+	borders();
+}
+
+// Method to update position
+void Bird::update() 
+{
+	// Update velocity
+	velocity.add(acceleration);
+
+	// Limit speed
+	velocity.limit(MAX_SPEED);
+	position.add(velocity);
+
+	// Reset acceleration to 0 each cycle
+	acceleration.multiply(0);
+}
+
+// Rotates bird to direction of velocity
+void Bird::rotate() 
+{
+	Vector firstVector = Vector(1, 0);
+	Vector secondVector = velocity;
+
+	float dotProduct = 1 * secondVector.x + firstVector.y * secondVector.y;
+	float determinant = 1 * secondVector.y - firstVector.y * secondVector.x;
+	float GLFW_Exception = -90;
+
+	rotation = (float)(atan2(determinant, dotProduct) * 180 / M_PI + GLFW_Exception);
+}
+
+void Bird::borders() 
+{
+	if (position.x < -(BIRD_RADIUS + window_dimensions.width / 2))
+		position.x = window_dimensions.width / 2 + BIRD_RADIUS;
+	if (position.y < -(BIRD_RADIUS + window_dimensions.height / 2))
+		position.y = window_dimensions.height / 2 + BIRD_RADIUS;
+	if (position.x > (window_dimensions.width / 2 + BIRD_RADIUS))
+		position.x = -(BIRD_RADIUS + window_dimensions.width / 2);
+	if (position.y > (window_dimensions.height / 2 + BIRD_RADIUS))
+		position.y = -(BIRD_RADIUS + window_dimensions.height / 2);
 }

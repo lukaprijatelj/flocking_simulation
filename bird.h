@@ -3,49 +3,50 @@
 #include <math.h>
 #include "Vector.h"
 #include "Color.h"
+#include "Dimension.h"
 
-#define ALLIGNMENT_WEIGHT 0.3
-#define COHESION_WEIGHT 0.01
-#define SEPARATION_WEIGHT 0.4
-#define LOCAL_DISTANCE 1
-#define BIRD_SPEED 0.0001
+// Weights for birds to fly properly
+#define ALLIGNMENT_WEIGHT 1.0 
+#define COHESION_WEIGHT 1.0 
+#define SEPARATION_WEIGHT 1.5 
+
+// Other constants
+#define SEPARATION_DISTANCE 25.0 
+#define ALLIGNMENT_DISTANCE 50.0 
+#define COHESION_DISTANCE 50.0 
+
 
 class Bird
 {
-private:
-	Vector nextPosition;
-	Vector nextVelocity;
-	float nextRotation;
-
 public:
+	float MAX_SPEED = 2.0 / 15;
+	float MAX_FORCE = 0.03 / 10;
+	float BIRD_RADIUS = 5.0f;  // Radius of the bird (I have choose MAX point of bird triangle points)
+
+	// Properties
 	Vector position;
 	Vector velocity;
+	Vector acceleration;
 	float rotation;
 	Color color;
-	Bird();
+	Dimension window_dimensions;
+
+	Bird(Dimension);
 	~Bird();
+
+	// General
 	void report();
+	void rotate();
+	void update();
+	void applyForce(Vector);
+	void flock(Bird **, int);
+	void run(Bird **, int);
+	Vector seek(Vector);
+	void borders();
 
-	void setX(float val);
-	void setY(float val);
-	void setVelX(float val);
-	void setVelY(float val);
-	void setRotation(float val);
-	void setPosition(float x, float y);
-
-	void swapNextValues();
-
-	float getX();
-	float getY();
-	float getVelX();
-	float getVelY();
-	float getRotation();
-	float getColorR();
-	float getColorG();
-	float getColorB();
-
-	void compute_new_position(Bird **, int);
-
-	float distanceFrom(Bird*);
+	// Main calculation
+	Vector separate(Bird **, int);
+	Vector align(Bird **, int);
+	Vector cohesion(Bird **, int);
 };
 

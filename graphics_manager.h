@@ -2,6 +2,7 @@
 #include "glad.h"
 #include "GLFW/glfw3.h"
 #include "bird.h"
+#include "Dimension.h"
 
 #define WINDOW_SIZE_X 1280
 #define WINDOW_SIZE_Y 720
@@ -27,5 +28,6 @@ public:
 	void draw_bird(Bird*);
 	bool loop();
 	void swap_buffers();
+	Dimension getDimensions();
 };
 
