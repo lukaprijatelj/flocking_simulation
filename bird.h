@@ -39,14 +39,11 @@ public:
 	void rotate();
 	void update();
 	void applyForce(Vector);
-	void flock(Bird **, int);
 	void run(Bird **, int);
 	Vector seek(Vector);
 	void borders();
 
 	// Main calculation
-	Vector separate(Bird **, int);
-	Vector align(Bird **, int);
-	Vector cohesion(Bird **, int);
+	void calculate(Bird **, int);
 };
 

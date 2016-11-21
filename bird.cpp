@@ -34,12 +34,16 @@ void Bird::report()
 	printf("] rotation: %.2f\n", rotation);
 }
 
-// Separation
-// Method checks for nearby boids and steers away
-Vector Bird::separate(Bird **birdArray, int n) 
+void Bird::calculate(Bird **birdArray, int n) 
 {
-	Vector steer = Vector(0, 0);
-	int count = 0;
+	Vector separation_steer = Vector(0, 0);
+	Vector allignment_steer = Vector(0, 0);
+	Vector cohesion_steer = Vector(0, 0);
+	Vector allignment_sum = Vector(0, 0);
+	Vector cohesion_sum = Vector(0, 0);
+	int separation_count = 0;
+	int allignment_count = 0;
+	int cohesion_count = 0;
 
 	// For every boid in the system, check if it's too close
 	for (int i = 0; i < n; i++)
@@ -57,100 +61,64 @@ Vector Bird::separate(Bird **birdArray, int n)
 			diff.normalize(1.0f);
 
 			// Weight by distance
-			diff.divide(d);        
-			steer.add(diff);
-			count++;           
+			diff.divide(d);
+			separation_steer.add(diff);
+			separation_count++;
+		}
+
+		if (d < ALLIGNMENT_DISTANCE) {
+			allignment_sum.add(bird->velocity);
+			allignment_count++;
+		}
+
+		if (d < COHESION_DISTANCE) {
+			// Add position
+			cohesion_sum.add(bird->position);
+			cohesion_count++;
 		}
 	}
 
 	// Divide with how many birds are in local flock
-	if (count > 0) {
-		steer.divide((float)count);
+	if (separation_count > 0) {
+		separation_steer.divide((float)separation_count);
 	}
 
-	if (steer.length() > 0) {
+	if (separation_steer.length() > 0) {
 		// Implement Reynolds: 
 		// Steering = Desired - Velocity
-		steer.normalize(1.0f);
-		steer.multiply(MAX_SPEED);
-		steer.subtract(velocity);
-		steer.limit(MAX_FORCE);
-	}
-	return steer;
-}
-
-// Alignment
-// For every nearby boid in the system, calculate the average velocity
-Vector Bird::align(Bird **birdArray, int n) 
-{
-	Vector sum = Vector(0, 0);
-	int count = 0;
-
-	for (int i = 0; i < n; i++)
-	{
-		Bird *bird = birdArray[i];
-		float d = Vector::distance(position, bird->position);
-
-		// If the distance is 0, than this bird is same
-		if (d == 0)
-			continue;
-
-		if (d < ALLIGNMENT_DISTANCE) {
-			sum.add(bird->velocity);
-			count++;
-		}
-	}
-
-	Vector steer = Vector();
-
-	if (count > 0) {
-		sum.divide((float)count);
-
-		// Implement Reynolds: 
-		// Steering = Desired - Velocity
-		sum.normalize(1.0f);
-		sum.multiply(MAX_SPEED);
-		steer = Vector::subtract(sum, velocity);
-		steer.limit(MAX_FORCE);
-		
-	}
-
-	return steer;
-}
-
-// Cohesion
-// For the average position (i.e. center) of all nearby boids, calculate steering vector towards that position
-Vector Bird::cohesion(Bird **birdArray, int n) 
-{
-	Vector sum = Vector(0, 0);   
-	int count = 0;
-
-	for (int i = 0; i < n; i++)
-	{
-		Bird *bird = birdArray[i];
-		float d = Vector::distance(position, bird->position);
-
-		// If the distance is 0, than this bird is same
-		if (d == 0)
-			continue;
-
-		if (d < COHESION_DISTANCE) {
-			// Add position
-			sum.add(bird->position); 
-			count++;
-		}
-	}
-
-	Vector steerVector = Vector();
-
-	if (count > 0) {
-		sum.divide(count);
-
-		// Steer towards the position
-		steerVector = seek(sum);
+		separation_steer.normalize(1.0f);
+		separation_steer.multiply(MAX_SPEED);
+		separation_steer.subtract(velocity);
+		separation_steer.limit(MAX_FORCE);
 	}
 	
-	return steerVector;
+	if (allignment_count > 0) {
+		allignment_sum.divide((float)allignment_count);
+
+		// Implement Reynolds: 
+		// Steering = Desired - Velocity
+		allignment_sum.normalize(1.0f);
+		allignment_sum.multiply(MAX_SPEED);
+		allignment_steer = Vector::subtract(allignment_sum, velocity);
+		allignment_steer.limit(MAX_FORCE);
+	}
+
+	if (cohesion_count > 0) {
+		cohesion_sum.divide(cohesion_count);
+
+		// Steer towards the position
+		cohesion_steer = seek(cohesion_sum);
+	}
+
+	// Arbitrarily weight these forces
+	separation_steer.multiply(SEPARATION_WEIGHT);
+	allignment_steer.multiply(ALLIGNMENT_WEIGHT);
+	cohesion_steer.multiply(COHESION_WEIGHT);
+
+	// Add the force vectors to acceleration
+	applyForce(separation_steer);
+	applyForce(allignment_steer);
+	applyForce(cohesion_steer);
 }
 
 Vector Bird::seek(Vector target)
@@ -171,24 +139,6 @@ Vector Bird::seek(Vector target)
 	return steer;
 }
 
-// We accumulate a new acceleration each time based on three rules
-void Bird::flock(Bird **birdArray, int n) 
-{
-	Vector sep = separate(birdArray, n);   
-	Vector ali = align(birdArray, n);     
-	Vector coh = cohesion(birdArray, n);  
-
-	// Arbitrarily weight these forces
-	sep.multiply(SEPARATION_WEIGHT);
-	ali.multiply(ALLIGNMENT_WEIGHT);
-	coh.multiply(COHESION_WEIGHT);
-
-	// Add the force vectors to acceleration
-	applyForce(sep);
-	applyForce(ali);
-	applyForce(coh);
-}
-
 void Bird::applyForce(Vector force) 
 {
 	acceleration.add(force);
@@ -197,7 +147,7 @@ void Bird::applyForce(Vector force)
 void Bird::run(Bird **birdArray, int n) 
 {
 	// Calculate new position
-	flock(birdArray, n);
+	calculate(birdArray, n);
 
 	// Move bird
 	update();
