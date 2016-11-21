@@ -12,9 +12,10 @@ Here we will show how to parallelize sequential algoritem into parallel one. We 
  
 ## Some Links
  - http://www.cse.buffalo.edu/faculty/miller/Courses/CSE633/Cosgrove-Spring-2014-CSE633.pdf
- - https://gamedevelopment.tutsplus.com/tutorials/3-simple-rules-of-flocking-behaviors-alignment-cohesion-and-separation--gamedev-3444
- - http://www.red3d.com/cwr/boids/
+ - [Best explanation] https://gamedevelopment.tutsplus.com/tutorials/3-simple-rules-of-flocking-behaviors-alignment-cohesion-and-separation--gamedev-3444
+ - [Original algorithm] http://www.red3d.com/cwr/boids/
  - http://www.red3d.com/cwr/papers/1987/SIGGRAPH87.pdf
+ - [Code copied from] https://www.processing.org/examples/flocking.html
  
 ## Authors
  - Gašper Kolar
