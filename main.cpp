@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <time.h>
 #include "bird.h"
 #include "graphics_manager.h"
 #include "Vector.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Flock.h"
+#include <time.h>
 
 
 using namespace std;

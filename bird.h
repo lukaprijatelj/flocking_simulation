@@ -39,11 +39,9 @@ public:
 	void rotate();
 	void update();
 	void applyForce(Vector);
-	void run(Bird **, int);
 	Vector seek(Vector);
 	void borders();
 
 	// Main calculation
 	void calculate(Bird **, int);
 };
-

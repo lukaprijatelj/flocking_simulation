@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 
+
 Bird::Bird(Dimension win) 
 {
 	window_dimensions = win;
@@ -142,21 +143,6 @@ Vector Bird::seek(Vector target)
 void Bird::applyForce(Vector force) 
 {
 	acceleration.add(force);
-}
-
-void Bird::run(Bird **birdArray, int n) 
-{
-	// Calculate new position
-	calculate(birdArray, n);
-
-	// Move bird
-	update();
-
-	// Rotate bird
-	rotate();
-
-	// Check for borders
-	borders();
 }
 
 // Method to update position
