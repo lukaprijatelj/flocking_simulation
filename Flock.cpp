@@ -72,51 +72,61 @@ void *runCurrenBird(void *arg)
 
 	// Set threadRunning to false
 	input->threadRunning[input->threadIndex] = false;
+
+	// TODO: A je potrebno to tudi uporabiti? 
+	// pthread_exit(0);
+
+	return NULL;
 }
 
 void Flock::run() {
 	int processedBirds = 0;
+	threads = new pthread_t[NUMBER_OF_THREADS];
 
-	while (true)
+	while (processedBirds < number_of_birds)
 	{
 		for (int i = 0; i < NUMBER_OF_THREADS; i++) 
 		{
-			if (threadRunning[i] == false) 
-			{
-				struct calculateParameters threadParams;
-				threadParams.birdArray = birds;
-				threadParams.n = number_of_birds;
-				threadParams.threadIndex = i;
-				threadParams.threadRunning = threadRunning;
-				threadParams.currentBird = birds[processedBirds];
-
-				Bird currentBird = *birds[i];
-
-				int returnCode = pthread_create(&threads[i], NULL, runCurrenBird, &threadParams);
-
-				if (returnCode) 
-				{
-					printf("ERROR; Return code from pthread_create is %d\n", returnCode);
-					exit(-1);
-				}
-				else 
-				{
-					threadRunning[i] = true;
-					processedBirds++;
-				}
-			}
-
 			if (processedBirds == number_of_birds)
 				break;
+
+			if (threadRunning[i] == true)
+				continue;
+
+			Bird currentBird = *birds[processedBirds];
+
+			struct calculateParameters threadParams;
+			threadParams.birdArray = birds;
+			threadParams.n = number_of_birds;
+			threadParams.threadIndex = i;
+			threadParams.threadRunning = threadRunning;
+			threadParams.currentBird = &currentBird;
+
+			int returnCode = pthread_create(&threads[i], NULL, runCurrenBird, (void *)&threadParams);
+
+			if (returnCode != 0) 
+			{
+				printf("ERROR; Return code from pthread_create is %d\n", returnCode);
+				exit(-1);
+			}
+			else 
+			{
+				threadRunning[i] = true;
+				processedBirds++;
+			}			
 		}
 	}
 
 	for (int i = 0; i < NUMBER_OF_THREADS; i++)
 	{
-		if (pthread_join(threads[i], NULL)) 
+		int errcode = pthread_join(threads[i], NULL);
+
+		if (errcode != 0)
 		{
-			fprintf(stderr, "Error joining thread\n");
+			fprintf(stderr, "Error joining thread %d\n", errcode);
 			exit(-1);
 		}
 	}
+
+	free(threads);
 }

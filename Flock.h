@@ -8,14 +8,14 @@
 #include <pthread.h>
 
 
-#define NUMBER_OF_THREADS 1
+#define NUMBER_OF_THREADS 2
 
 class Flock
 {
 public:
 	int number_of_birds = 200;
 	Bird **birds;
-	pthread_t threads[NUMBER_OF_THREADS];
+	pthread_t *threads;
 	bool threadRunning[NUMBER_OF_THREADS];
 
 	Flock();
