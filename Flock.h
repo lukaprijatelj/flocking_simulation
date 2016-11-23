@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 
-#define NUMBER_OF_THREADS 2
+#define NUMBER_OF_THREADS 10
 
 class Flock
 {

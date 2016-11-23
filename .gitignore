@@ -11,6 +11,12 @@
 /ConsoleApplication1.VC.VC.opendb
 /ConsoleApplication1.VC.db
 /ConsoleApplication1.sln
+/flocking_simulation.opensdf
+/flocking_simulation.sdf
+/flocking_simulation.sln
+/flocking_simulation.vcxproj
+/flocking_simulation.vcxproj.filters
+/.vs
 /.vs/ConsoleApplication1/v14
 /Release
 /x64

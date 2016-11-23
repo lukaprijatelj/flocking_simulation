@@ -4,9 +4,7 @@
 struct calculateParameters
 {
 	Bird **birdArray;
-	Bird *currentBird;
 	int n;
-	bool *threadRunning;
 	int threadIndex;
 };
 
@@ -44,8 +42,7 @@ void Flock::generate(Dimension windowDimension) {
 	}
 }
 
-void Flock::initThreads()
-{
+void Flock::initThreads() {
 	for (int i = 0; i < NUMBER_OF_THREADS; i++) {
 		threadRunning[i] = false;
 	}
@@ -56,77 +53,55 @@ void *runCurrenBird(void *arg)
 	// Get arguments as struct
 	struct calculateParameters *input = (struct calculateParameters*)arg;
 
-	Bird currentBird = *input->currentBird;
+	int num = input->n / NUMBER_OF_THREADS;
+	int start = input->threadIndex * num;
 
-	// Calculate new position
-	currentBird.calculate(input->birdArray, input->n);
+	// Iterate over threads birds
+	for (int i = start; i < start + num; i++) {
+		//std::cout << input->threadIndex << " " << i << std::endl;
+		Bird *currentBird = input->birdArray[i];
 
-	// Move bird
-	currentBird.update();
+		// Calculate new position
+		currentBird->calculate(input->birdArray, input->n);
 
-	// Rotate bird
-	currentBird.rotate();
+		// Move bird
+		currentBird->update();
 
-	// Check for borders
-	currentBird.borders();
+		// Rotate bird
+		currentBird->rotate();
 
-	// Set threadRunning to false
-	input->threadRunning[input->threadIndex] = false;
+		// Check for borders
+		currentBird->borders();
+	}
 
-	// TODO: A je potrebno to tudi uporabiti? 
-	// pthread_exit(0);
-
+	pthread_exit(0);
 	return NULL;
 }
 
 void Flock::run() {
-	int processedBirds = 0;
-	threads = new pthread_t[NUMBER_OF_THREADS];
+	pthread_t threads[NUMBER_OF_THREADS];
+	struct calculateParameters threadParams[NUMBER_OF_THREADS];
 
-	while (processedBirds < number_of_birds)
-	{
-		for (int i = 0; i < NUMBER_OF_THREADS; i++) 
-		{
-			if (processedBirds == number_of_birds)
-				break;
+	for (int i = 0; i < NUMBER_OF_THREADS; i++) {
+		
+		threadParams[i].birdArray = birds;
+		threadParams[i].n = number_of_birds;
+		threadParams[i].threadIndex = i;
 
-			if (threadRunning[i] == true)
-				continue;
+		int returnCode = pthread_create(&threads[i], NULL, runCurrenBird, (void *)&threadParams[i]);
 
-			Bird currentBird = *birds[processedBirds];
-
-			struct calculateParameters threadParams;
-			threadParams.birdArray = birds;
-			threadParams.n = number_of_birds;
-			threadParams.threadIndex = i;
-			threadParams.threadRunning = threadRunning;
-			threadParams.currentBird = &currentBird;
-
-			int returnCode = pthread_create(&threads[i], NULL, runCurrenBird, (void *)&threadParams);
-
-			if (returnCode != 0) 
-			{
-				printf("ERROR; Return code from pthread_create is %d\n", returnCode);
-				exit(-1);
-			}
-			else 
-			{
-				threadRunning[i] = true;
-				processedBirds++;
-			}			
-		}
+		if (returnCode != 0) {
+			printf("ERROR; Return code from pthread_create is %d\n", returnCode);
+			exit(-1);
+		}		
 	}
 
-	for (int i = 0; i < NUMBER_OF_THREADS; i++)
-	{
+	for (int i = 0; i < NUMBER_OF_THREADS; i++) {
 		int errcode = pthread_join(threads[i], NULL);
 
-		if (errcode != 0)
-		{
+		if (errcode != 0) {
 			fprintf(stderr, "Error joining thread %d\n", errcode);
 			exit(-1);
 		}
 	}
-
-	free(threads);
 }
