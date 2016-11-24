@@ -14,8 +14,8 @@
 
 using namespace std;
 
-void print_stats(float avg_loop_time) {
-	cout << '\r' << "Avg loop time: " << avg_loop_time << flush;
+void print_stats(double calculation_time, double draw_time, float fps) {
+	cout << '\r' << "Avg loop time: " << fps << " [calculation: " << calculation_time << "s] [draw: " << draw_time << "s]           " << flush;
 }
 
 int main() {
@@ -35,13 +35,22 @@ int main() {
 	while (graphics_manager->loop()) 
 	{
 		loop_count++;
+
+		clock_t begin_draw_time = clock();
 		graphics_manager->draw_birds(flock.birds, flock.number_of_birds);
 		graphics_manager->swap_buffers();
-
+		clock_t end_draw_time = clock();
+		
 		// Recalculates positions for all birds in the flock.
+		clock_t begin_calculation_time = clock();
 		flock.run();
+		clock_t end_calculation_time = clock();
 
-		print_stats(1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count));
+		double calculation_time = double(end_calculation_time - begin_calculation_time) / CLOCKS_PER_SEC;
+		double draw_time = double(end_draw_time - begin_draw_time) / CLOCKS_PER_SEC;
+		float fps = 1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count);
+
+		print_stats(calculation_time, draw_time, fps);
 	}
 
 	// Cleanup
