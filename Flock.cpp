@@ -36,6 +36,7 @@ void Flock::generate(Dimension windowDimension) {
 }
 
 void Flock::run() {
+	#pragma omp parallel for
 	for (int i = 0; i < number_of_birds; i++) {
 		birds[i]->run(birds, number_of_birds);
 	}
