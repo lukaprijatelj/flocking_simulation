@@ -28,6 +28,7 @@ int main() {
 	// Generate all N number of birds and layout them on canvas.
 	// Layout dimensions will be same as one of the window.
 	flock.generate(window_dimension);
+	flock.generateGrid(window_dimension, 50);
 
 
 	// Start iterations

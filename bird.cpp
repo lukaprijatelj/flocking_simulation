@@ -34,7 +34,7 @@ void Bird::report()
 	printf("] rotation: %.2f\n", rotation);
 }
 
-void Bird::calculate(Bird **birdArray, int n) 
+void Bird::calculate(Bird ***grid, int *bird_counts, Dimension grid_size, int cell_size)
 {
 	Vector separation_steer = Vector(0, 0);
 	Vector allignment_steer = Vector(0, 0);
@@ -45,36 +45,59 @@ void Bird::calculate(Bird **birdArray, int n)
 	int allignment_count = 0;
 	int cohesion_count = 0;
 
+	int bird_x = (this->position.x + (this->window_dimensions.width / 2)) / cell_size;
+	int bird_y = (this->position.y + (this->window_dimensions.height / 2)) / cell_size;
+	
+
 	// For every boid in the system, check if it's too close
-	for (int i = 0; i < n; i++)
-	{
-		Bird *bird = birdArray[i];
-		float d = Vector::distance(position, bird->position);
+	for (int y = -1; y <= 1; y++) {
+		// Make sure cell_y is within bounds
+		int cell_y = bird_y + y;
+		if (cell_y < 0)
+			cell_y = 0;
+		else if (cell_y >= grid_size.height)
+			cell_y = grid_size.height - 1;
+		for (int x = -1; x <= 1; x++) {
+			// Make sure cell_x is within bounds
+			int cell_x = bird_x + x;
+			if (cell_x < 0)
+				cell_x = 0;
+			else if (cell_x >= grid_size.width)
+				cell_x = grid_size.width - 1;
 
-		// If the distance is 0, than this bird is same
-		if (d == 0)
-			continue;
+			int grid_index = ((cell_y)* grid_size.width) + cell_x;
+			int n = bird_counts[grid_index];
 
-		if (d < SEPARATION_DISTANCE) {
-			// Calculate vector pointing away from neighbor
-			Vector diff = Vector::subtract(position, bird->position);
-			diff.normalize(1.0f);
+			for (int i = 0; i < n; i++) {
+				Bird *bird = grid[grid_index][i];
+				float d = Vector::distance(position, bird->position);
 
-			// Weight by distance
-			diff.divide(d);
-			separation_steer.add(diff);
-			separation_count++;
-		}
+				// If the distance is 0, than this bird is same
+				if (d == 0)
+					continue;
 
-		if (d < ALLIGNMENT_DISTANCE) {
-			allignment_sum.add(bird->velocity);
-			allignment_count++;
-		}
+				if (d < SEPARATION_DISTANCE) {
+					// Calculate vector pointing away from neighbor
+					Vector diff = Vector::subtract(position, bird->position);
+					diff.normalize(1.0f);
 
-		if (d < COHESION_DISTANCE) {
-			// Add position
-			cohesion_sum.add(bird->position);
-			cohesion_count++;
+					// Weight by distance
+					diff.divide(d);
+					separation_steer.add(diff);
+					separation_count++;
+				}
+
+				if (d < ALLIGNMENT_DISTANCE) {
+					allignment_sum.add(bird->velocity);
+					allignment_count++;
+				}
+
+				if (d < COHESION_DISTANCE) {
+					// Add position
+					cohesion_sum.add(bird->position);
+					cohesion_count++;
+				}
+			}
 		}
 	}
 
@@ -144,10 +167,10 @@ void Bird::applyForce(Vector force)
 	acceleration.add(force);
 }
 
-void Bird::run(Bird **birdArray, int n) 
+void Bird::run(Bird ***grid, int *bird_counts, Dimension grid_size, int cell_size)
 {
 	// Calculate new position
-	calculate(birdArray, n);
+	calculate(grid, bird_counts, grid_size, cell_size);
 
 	// Move bird
 	update();

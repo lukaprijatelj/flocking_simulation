@@ -39,11 +39,11 @@ public:
 	void rotate();
 	void update();
 	void applyForce(Vector);
-	void run(Bird **, int);
+	void run(Bird ***grid, int *bird_counts, Dimension grid_size, int cell_size);
 	Vector seek(Vector);
 	void borders();
 
 	// Main calculation
-	void calculate(Bird **, int);
+	void calculate(Bird ***grid, int *bird_counts, Dimension grid_size, int cell_size);
 };
 

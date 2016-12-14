@@ -14,12 +14,6 @@
 class Graphics_manager {
 	GLFWwindow* window;
 
-	GLuint vbo; // Virtual Buffer Array (VBO)
-	GLuint vao; // Vertex Array Object (VAO)
-	GLuint vs;  // Vertex Shader (VS)
-	GLuint fs;  // Fragment Shader (FS)
-	GLuint sp;  // Shader Program (SP)
-
 public:
 	Graphics_manager();
 	~Graphics_manager();
