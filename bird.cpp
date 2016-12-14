@@ -14,6 +14,10 @@ Bird::Bird(Dimension win)
 	color.red = 0.30f;
 	color.green = 0.00f;
 	color.blue = 1.00f;
+
+	MAX_SPEED = 2.0 / 15;
+	MAX_FORCE = 0.03 / 10;
+	BIRD_RADIUS = 5.0f;
 }
 
 Bird::~Bird() {}
