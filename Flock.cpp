@@ -23,8 +23,8 @@ void Flock::generate(Dimension windowDimension) {
 		float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / windowDimension.width));
 		float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / windowDimension.height));
 
-		/*birds[i]->position.x = x - windowDimension.width / 2;
-		birds[i]->position.y = y - windowDimension.height / 2;*/
+		birds[i]->position.x = x - windowDimension.width / 2;
+		birds[i]->position.y = y - windowDimension.height / 2;
 
 		Vector velocityV = Vector();
 		velocityV.x = rand();
