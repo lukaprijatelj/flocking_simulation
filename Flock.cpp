@@ -18,8 +18,8 @@ void Flock::generate(Dimension windowDimension) {
 	for (int i = 0; i < number_of_birds; i++) {
 		birds[i] = new Bird(windowDimension);
 
-		float x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / windowDimension.width));
-		float y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / windowDimension.height));
+		float x = float(rand()) / RAND_MAX * windowDimension.width;
+		float y = float(rand()) / RAND_MAX * windowDimension.height;
 
 		birds[i]->position.x = x - windowDimension.width / 2;
 		birds[i]->position.y = y - windowDimension.height / 2;
@@ -57,12 +57,13 @@ void Flock::generateGrid(Dimension windowDimension, int cell_size) {
 }
 
 void Flock::distributeBirds() {
+	int i = 0;
 	// Reset counts
 	for (int i = 0; i < grid_size.width*grid_size.height; i++) {
 		this->birds_per_grid[i] = 0;
 	}
 	// Distribute birds
-	for (int i = 0; i < number_of_birds; i++) {
+	for (i = 0; i < number_of_birds; i++) {
 		int cell_x = (birds[i]->position.x + (window_size.width / 2)) / cell_size;
 		int cell_y = (birds[i]->position.y + (window_size.height / 2)) / cell_size;
 		int grid_index = (cell_y * grid_size.width) + cell_x;

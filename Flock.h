@@ -8,7 +8,7 @@
 class Flock
 {
 public:
-	int number_of_birds = 1000;
+	int number_of_birds = 10000;
 	Bird **birds;
 
 	Bird ***grid;

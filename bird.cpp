@@ -53,17 +53,13 @@ void Bird::calculate(Bird ***grid, int *bird_counts, Dimension grid_size, int ce
 	for (int y = -1; y <= 1; y++) {
 		// Make sure cell_y is within bounds
 		int cell_y = bird_y + y;
-		if (cell_y < 0)
-			cell_y = 0;
-		else if (cell_y >= grid_size.height)
-			cell_y = grid_size.height - 1;
+		if ((cell_y < 0) || (cell_y >= grid_size.height))
+			continue;
 		for (int x = -1; x <= 1; x++) {
 			// Make sure cell_x is within bounds
 			int cell_x = bird_x + x;
-			if (cell_x < 0)
-				cell_x = 0;
-			else if (cell_x >= grid_size.width)
-				cell_x = grid_size.width - 1;
+			if ((cell_x < 0) || (cell_x >= grid_size.width))
+				continue;
 
 			int grid_index = ((cell_y)* grid_size.width) + cell_x;
 			int n = bird_counts[grid_index];
