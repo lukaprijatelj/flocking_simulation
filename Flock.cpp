@@ -4,6 +4,7 @@
 
 Flock::Flock(int size)
 {
+	omp_set_num_threads(4);
 	number_of_birds = size;
 }
 
@@ -76,6 +77,7 @@ void Flock::distributeBirds() {
 
 void Flock::run() {
 	this->distributeBirds();
+	#pragma omp parallel for
 	for (int i = 0; i < number_of_birds; i++) {
 		birds[i]->run(grid, birds_per_grid, grid_size, cell_size);
 	}
