@@ -3,6 +3,7 @@
 #include "GLFW/glfw3.h"
 #include "bird.h"
 #include "Dimension.h"
+#include "Color.h"
 
 #define WINDOW_SIZE_X 1280
 #define WINDOW_SIZE_Y 720
@@ -19,6 +20,8 @@ class Graphics_manager {
 	GLuint vs;  // Vertex Shader (VS)
 	GLuint fs;  // Fragment Shader (FS)
 	GLuint sp;  // Shader Program (SP)
+
+	Color birdColor;
 
 public:
 	Graphics_manager();

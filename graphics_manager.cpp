@@ -23,6 +23,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 // Constructor
 Graphics_manager::Graphics_manager() {
+	birdColor.red = 0.30f;
+	birdColor.green = 0.00f;
+	birdColor.blue = 1.00f;
+
 	window = NULL;
 	glfwSetErrorCallback(error_callback);
 
@@ -94,7 +98,7 @@ void Graphics_manager::draw_bird(Bird *bird) {
 	glRotatef(bird->rotation, 0, 0, 1);
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(bird->color.red, bird->color.green, bird->color.blue);
+	glColor3f(birdColor.red, birdColor.green, birdColor.blue);
 	glVertex3f(-4.0f, -4.0f, 0.00f);
 	glVertex3f( 4.0f, -4.0f, 0.00f);
 	glColor3f(1.f, 0.f, 1.f);
