@@ -1,7 +1,6 @@
 #include "Flock.h"
 #include <time.h>
 
-
 Flock::Flock(int size)
 {
 	number_of_birds = size;
@@ -74,9 +73,49 @@ void Flock::distributeBirds() {
 	}
 }
 
+void *runCurrenBird(void *arg){
+	// Get arguments as struct
+	struct calculateParameters *input = (struct calculateParameters*)arg;
+	
+	int num = input->n / NUMBER_OF_THREADS;
+	int start = input->threadIndex * num;
+	
+	// Iterate over threads birds
+	for (int i = start; i < start + num; i++) {
+		input->birdArray[i]->run(input->grid, input->bird_counts, input->grid_size, input->cell_size);
+	}
+
+	pthread_exit(0);
+	return NULL;
+}
+
 void Flock::run() {
 	this->distributeBirds();
-	for (int i = 0; i < number_of_birds; i++) {
-		birds[i]->run(grid, birds_per_grid, grid_size, cell_size);
+	
+	// Init and start threads
+	for (int i = 0; i < NUMBER_OF_THREADS; i++) {
+		// Old params
+		threadParams[i].birdArray = birds;
+		threadParams[i].n = number_of_birds;
+		threadParams[i].threadIndex = i;
+		// Grid stuff
+		threadParams[i].grid = grid;
+		threadParams[i].bird_counts = birds_per_grid;
+		threadParams[i].grid_size = grid_size;
+		threadParams[i].cell_size = cell_size;
+		int returnCode = pthread_create(&threads[i], NULL, runCurrenBird, (void *)&threadParams[i]);
+		if (returnCode != 0) {
+			printf("ERROR; Return code from pthread_create is %d\n", returnCode);
+			exit(-1);
+		}
+	}
+
+	// Join back the threads 
+	for (int i = 0; i < NUMBER_OF_THREADS; i++) {
+		int errcode = pthread_join(threads[i], NULL);
+		if (errcode != 0) {
+			fprintf(stderr, "Error joining thread %d\n", errcode);
+			exit(-1);
+		}
 	}
 }
