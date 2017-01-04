@@ -2,8 +2,9 @@
 #include <time.h>
 
 
-Flock::Flock()
+Flock::Flock(int size)
 {
+	number_of_birds = size;
 }
 
 Flock::~Flock()

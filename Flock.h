@@ -18,6 +18,7 @@ public:
 	Dimension window_size;
 
 	Flock();
+	Flock(int size);
 	~Flock();
 
 	void run();
