@@ -15,14 +15,14 @@
 
 
 struct Vector {
-	cl_long x;
-	cl_long y;
+	cl_float x;
+	cl_float y;
 };
 struct Bird {
 	Vector position;
 	Vector velocity;
 	Vector acceleration;
-	cl_long rotation;
+	cl_float rotation;
 };
 
 
@@ -44,6 +44,7 @@ public:
 	size_t global_item_size[1];
 	Dimension window_dimensions;
 	cl_mem flock_obj;
+	cl_mem flock_new_obj;
 
 
 	Flock();

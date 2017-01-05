@@ -23,8 +23,8 @@
 
 // Structure definition
 typedef struct {
-	long x;
-	long y;
+	float x;
+	float y;
 } Vector;
 typedef struct {
 	Vector position;
@@ -274,7 +274,7 @@ void Bird_borders(__global Bird *currentBird)
 
 
 // Main kernel program
-__kernel void flockingSimulation(__global Bird *flock, __global int *number_of_birds)
+__kernel void flockingSimulation(__global Bird *flock, __global Bird *flock __global int *number_of_birds)
 {
 	// Global ids
 	int gid_0 = get_global_id(0);
@@ -285,15 +285,10 @@ __kernel void flockingSimulation(__global Bird *flock, __global int *number_of_b
 	//int lid_1 = get_local_id(1);
 
 	
-	if (gid_0 == 0) {
-		volatile __global float *pointer = &(flock[0].position.x);
-		atom_add(pointer, 3);
-		volatile __global float *pointer1 = &(flock[0].position.y);
-		atom_add(pointer1, 3);
-	}
+
 
 	// Iterate over threads birds
-	/*if(gid_0 < *number_of_birds) {
+	if(gid_0 < *number_of_birds) {
 		__global Bird *currentBird = &(flock[gid_0]);
 
 		// Calculate new position
@@ -307,9 +302,7 @@ __kernel void flockingSimulation(__global Bird *flock, __global int *number_of_b
 
 		// Check for borders
 		Bird_borders(currentBird);
-
-		
-	}*/
+	}
 
 	
 }

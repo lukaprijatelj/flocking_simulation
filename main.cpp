@@ -41,7 +41,7 @@ int main() {
 		// Recalculates positions for all birds in the flock.
 		flock.run();
 
-		//print_stats(1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count));
+		print_stats(1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count));
 	}
 
 	// Cleanup
