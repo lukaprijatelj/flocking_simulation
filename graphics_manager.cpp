@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <iostream>
 
+
 //glcolor3...
 //glVertex3f
 
@@ -23,10 +24,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 // Constructor
 Graphics_manager::Graphics_manager() {
-	birdColor.red = 0.30f;
-	birdColor.green = 0.00f;
-	birdColor.blue = 1.00f;
-
 	window = NULL;
 	glfwSetErrorCallback(error_callback);
 
@@ -69,7 +66,7 @@ Dimension Graphics_manager::getDimensions() {
 	return Dimension(WINDOW_SIZE_X, WINDOW_SIZE_Y);
 }
 
-void Graphics_manager::draw_birds(Bird **birds, int n) {
+void Graphics_manager::draw_birds(Bird *birds, int n) {
 	float ratio;
 	int width, height;
 
@@ -92,13 +89,13 @@ void Graphics_manager::draw_birds(Bird **birds, int n) {
 	return;
 }
 
-void Graphics_manager::draw_bird(Bird *bird) {
+void Graphics_manager::draw_bird(Bird bird) {
 	glPushMatrix();
-	glTranslatef(bird->position.x, bird->position.y, 0.0);
-	glRotatef(bird->rotation, 0, 0, 1);
+	glTranslatef(bird.position.x, bird.position.y, 0.0);
+	glRotatef(bird.rotation, 0, 0, 1);
 
 	glBegin(GL_TRIANGLES);
-	glColor3f(birdColor.red, birdColor.green, birdColor.blue);
+	glColor3f(BIRD_COLOR_RED, BIRD_COLOR_GREEN, BIRD_COLOR_BLUE);
 	glVertex3f(-4.0f, -4.0f, 0.00f);
 	glVertex3f( 4.0f, -4.0f, 0.00f);
 	glColor3f(1.f, 0.f, 1.f);

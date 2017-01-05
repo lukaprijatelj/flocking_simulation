@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "bird.h"
 #include "graphics_manager.h"
-#include "Vector.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Flock.h"
@@ -24,11 +22,13 @@ int main() {
 	Dimension window_dimension = graphics_manager->getDimensions();
 	uint64_t loop_count = 0;
 
+	flock.initGPU();
 
 	// Generate all N number of birds and layout them on canvas.
 	// Layout dimensions will be same as one of the window.
 	flock.generate(window_dimension);
 
+	flock.buildKernel();
 
 	// Start iterations
 	clock_t begin_time = clock();
@@ -41,7 +41,7 @@ int main() {
 		// Recalculates positions for all birds in the flock.
 		flock.run();
 
-		print_stats(1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count));
+		//print_stats(1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_count));
 	}
 
 	// Cleanup

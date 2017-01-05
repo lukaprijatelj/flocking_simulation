@@ -1,9 +1,8 @@
 #pragma once
 #include "glad.h"
 #include "GLFW/glfw3.h"
-#include "bird.h"
 #include "Dimension.h"
-#include "Color.h"
+#include "Flock.h"
 
 #define WINDOW_SIZE_X 1280
 #define WINDOW_SIZE_Y 720
@@ -11,6 +10,10 @@
 #define BACKGROUND_COLOR_R 0.8
 #define BACKGROUND_COLOR_G 0.8
 #define BACKGROUND_COLOR_B 0.8
+
+#define BIRD_COLOR_RED 0.30f
+#define BIRD_COLOR_GREEN 0.00f
+#define BIRD_COLOR_BLUE 1.00f
 
 class Graphics_manager {
 	GLFWwindow* window;
@@ -21,14 +24,12 @@ class Graphics_manager {
 	GLuint fs;  // Fragment Shader (FS)
 	GLuint sp;  // Shader Program (SP)
 
-	Color birdColor;
-
 public:
 	Graphics_manager();
 	~Graphics_manager();
 
-	void draw_birds(Bird**, int);
-	void draw_bird(Bird*);
+	void draw_birds(Bird*, int);
+	void draw_bird(Bird);
 	bool loop();
 	void swap_buffers();
 	Dimension getDimensions();

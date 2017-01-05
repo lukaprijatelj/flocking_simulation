@@ -1,3 +1,6 @@
+
+
+
 // Weights for birds to fly properly
 #define ALLIGNMENT_WEIGHT 1.0 
 #define COHESION_WEIGHT 1.0 
@@ -8,18 +11,20 @@
 #define ALLIGNMENT_DISTANCE 50.0 
 #define COHESION_DISTANCE 50.0 
 
-#define MAX_SPEED = 2.0 / 15;
-#define MAX_FORCE = 0.03 / 10;
-#define BIRD_RADIUS = 5.0f;  // Radius of the bird (I have choose MAX point of bird triangle points)
+#define MAX_SPEED 0.133333f
+#define MAX_FORCE 0.003f
+#define BIRD_RADIUS 5.0f  // Radius of the bird (I have choose MAX point of bird triangle points)
 
+#define WINDOW_SIZE_X 1280
+#define WINDOW_SIZE_Y 720
 
 
 
 
 // Structure definition
 typedef struct {
-	float x;
-	float y;
+	long x;
+	long y;
 } Vector;
 typedef struct {
 	Vector position;
@@ -32,10 +37,98 @@ typedef struct {
 
 
 
+float Vector_length(Vector vec)
+{
+	return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+Vector Vector_normalize(Vector vec, float number)
+{
+	float length = Vector_length(vec);
+
+	if (length != 0) {
+		Vector toReturn;
+		toReturn.x = vec.x / length;
+		toReturn.y = vec.y / length;
+
+		toReturn.x = toReturn.x * number;
+		toReturn.y = toReturn.y * number;
+
+		return toReturn;
+	}
+
+	return vec;
+}
+Vector Vector_add(Vector a, Vector b)
+{
+	Vector toReturn;
+	toReturn.x = a.x + b.x;
+	toReturn.y = a.y + b.y;
+	return toReturn;
+}
+Vector Vector_subtract(Vector a, Vector b)
+{
+	Vector toReturn;
+	toReturn.x = a.x - b.x;
+	toReturn.y = a.y - b.y;
+	return toReturn;
+}
+float Vector_distance(Vector a, Vector b)
+{
+	Vector subtracted;
+	subtracted.x = a.x - b.x;
+	subtracted.y = a.y - b.y;
+	return sqrt(subtracted.x * subtracted.x + subtracted.y * subtracted.y);
+}
+Vector Vector_divide(Vector vec, float number)
+{
+	Vector toReturn;
+	toReturn.x = vec.x / number;
+	toReturn.y = vec.y / number;
+	return toReturn;
+}
+Vector Vector_multiply(Vector vec, float number)
+{
+	Vector toReturn;
+	toReturn.x = vec.x * number;
+	toReturn.y = vec.y * number;
+	return toReturn;
+}
+Vector Vector_limit(Vector vec, float number)
+{
+	if (Vector_length(vec) > number)
+	{
+		return Vector_normalize(vec, number);
+	}
+	return vec;
+}
 
 
+
+
+
+Vector Bird_seek(__global Bird *currentBird, Vector target)
+{
+	// A vector pointing from the position to the target
+	Vector desired = Vector_subtract(target, currentBird->position);
+
+	// Scale to maximum speed
+	desired = Vector_normalize(desired, 1.0f);
+	desired = Vector_multiply(desired, MAX_SPEED);
+
+	// Steering = Desired minus Velocity
+	Vector steer = Vector_subtract(desired, currentBird->velocity);
+
+	// Limit to maximum steering force
+	steer = Vector_limit(steer, MAX_FORCE);
+
+	return steer;
+}
+void Bird_applyForce(__global Bird *currentBird, Vector force)
+{
+	currentBird->acceleration = Vector_add(currentBird->acceleration, force);
+}
 // Calulates the new position
-void Bird_calculate(Bird *currentBird, Bird **birdArray, int n)
+void Bird_calculate(__global Bird *currentBird, __global Bird *birdArray, int n)
 {
 	Vector separation_steer;
 	separation_steer.x = 0;
@@ -64,7 +157,7 @@ void Bird_calculate(Bird *currentBird, Bird **birdArray, int n)
 	// For every boid in the system, check if it's too close
 	for (int i = 0; i < n; i++)
 	{
-		Bird *bird = birdArray[i];
+		__global Bird *bird = &(birdArray[i]);
 		float d = Vector_distance(currentBird->position, bird->position);
 
 		// If the distance is 0, than this bird is same
@@ -132,46 +225,25 @@ void Bird_calculate(Bird *currentBird, Bird **birdArray, int n)
 	cohesion_steer = Vector_multiply(cohesion_steer, COHESION_WEIGHT);
 
 	// Add the force vectors to acceleration
-	applyForce(currentBird, separation_steer);
-	applyForce(currentBird, allignment_steer);
-	applyForce(currentBird, cohesion_steer);
-}
-Vector Bird_seek(Bird *currentBird, Vector target)
-{
-	// A vector pointing from the position to the target
-	Vector desired = Vector_subtract(target, currentBird->position);
-
-	// Scale to maximum speed
-	desired = Vector_normalize(desired, 1.0f);
-	desired = Vector_multiply(desired, MAX_SPEED);
-
-	// Steering = Desired minus Velocity
-	Vector steer = Vector_subtract(desired, currentBird->velocity);
-
-	// Limit to maximum steering force
-	steer = Vector_limit(steer, MAX_FORCE);
-
-	return steer;
-}
-void Bird_applyForce(Bird *currentBird, Vector force)
-{
-	currentBird->acceleration = Vector_add(currentBird->acceleration, force);
+	Bird_applyForce(currentBird, separation_steer);
+	Bird_applyForce(currentBird, allignment_steer);
+	Bird_applyForce(currentBird, cohesion_steer);
 }
 // Updates or moves the bird with precalculated velocity.
-void Bird_update(Bird *currentBird)
+void Bird_update(__global Bird *currentBird)
 {
 	// Update velocity
-	currentBird->velocity = Vector_add(currentBird->velocity, acceleration);
+	currentBird->velocity = Vector_add(currentBird->velocity, currentBird->acceleration);
 
 	// Limit speed
 	currentBird->velocity = Vector_limit(currentBird->velocity, MAX_SPEED);
-	currentBird->position = Vector_add(currentBird->position, velocity);
+	currentBird->position = Vector_add(currentBird->position, currentBird->velocity);
 
 	// Reset acceleration to 0 each cycle
 	currentBird->acceleration = Vector_multiply(currentBird->acceleration, 0);
 }
 // Rotates bird to direction of velocity
-void Bird_rotate(Bird *currentBird)
+void Bird_rotate(__global Bird *currentBird)
 {
 	Vector firstVector;
 	firstVector.x = 1;
@@ -184,122 +256,60 @@ void Bird_rotate(Bird *currentBird)
 
 	currentBird->rotation = (float)(atan2(determinant, dotProduct) * 180 / M_PI + GLFW_Exception);
 }
-void Bird_borders(Bird *currentBird)
+void Bird_borders(__global Bird *currentBird)
 {
-	if (currentBird->position.x < -(BIRD_RADIUS + window_dimensions.width / 2))
-		currentBird->position.x = window_dimensions.width / 2 + BIRD_RADIUS;
-	if (currentBird->position.y < -(BIRD_RADIUS + window_dimensions.height / 2))
-		currentBird->position.y = window_dimensions.height / 2 + BIRD_RADIUS;
-	if (currentBird->position.x >(window_dimensions.width / 2 + BIRD_RADIUS))
-		currentBird->position.x = -(BIRD_RADIUS + window_dimensions.width / 2);
-	if (currentBird->position.y >(window_dimensions.height / 2 + BIRD_RADIUS))
-		currentBird->position.y = -(BIRD_RADIUS + window_dimensions.height / 2);
+	if (currentBird->position.x < -(BIRD_RADIUS + WINDOW_SIZE_X / 2))
+		currentBird->position.x = WINDOW_SIZE_X / 2 + BIRD_RADIUS;
+	if (currentBird->position.y < -(BIRD_RADIUS + WINDOW_SIZE_Y / 2))
+		currentBird->position.y = WINDOW_SIZE_Y / 2 + BIRD_RADIUS;
+	if (currentBird->position.x > (WINDOW_SIZE_X / 2 + BIRD_RADIUS))
+		currentBird->position.x = -(BIRD_RADIUS + WINDOW_SIZE_X / 2);
+	if (currentBird->position.y > (WINDOW_SIZE_Y / 2 + BIRD_RADIUS))
+		currentBird->position.y = -(BIRD_RADIUS + WINDOW_SIZE_Y / 2);
 }
 
-
-
-
-float Vector_length(Vector vec)
-{
-	return sqrt(vec.x * vec.x + vec.y * vec.y);
-}
-Vector Vector_normalize(Vector vec, float number)
-{
-	float length = Vector_length(vec);
-
-	Vector toReturn;
-
-	if (length != 0) {
-		toReturn.x = vec.x / length;
-		toReturn.y = vec.y / length;
-
-		toReturn.x = vec.x * number;
-		toReturn.y = vec.y * number;
-	}
-
-	return toReturn;
-}
-Vector Vector_add(Vector a, Vector b)
-{
-	Vector toReturn;
-	toReturn.x = a.x + b.x;
-	toReturn.y = a.y + b.y;
-	return toReturn;
-}
-Vector Vector::subtract(Vector a, Vector b)
-{
-	Vector toReturn;
-	toReturn.x = a.x - b.x;
-	toReturn.y = a.y - b.y;
-	return toReturn;
-}
-float Vector_distance(Vector a, Vector b)
-{
-	Vector subtracted;
-	subtracted.x = a.x - b.x;
-	subtracted.y = a.y - b.y;
-	return sqrt(subtracted.x * subtracted.x + subtracted.y * subtracted.y);
-}
-Vector Vector_divide(Vector vec, float number)
-{
-	Vector toReturn;
-	toReturn.x = vec.x / number;
-	toReturn.y = vec.y / number;
-	return toReturn;
-}
-Vector Vector_multiply(Vector vec, float number)
-{
-	Vector toReturn;
-	toReturn.x = vec.x * number;
-	toReturn.y = vec.y * number;
-	return toReturn;
-}
-Vector Vector_limit(Vector vec, float number)
-{
-	if (Vector_length(vec) > number)
-	{
-		return Vector_normalize(vec, number);
-	}
-	return vec;
-}
 
 
 
 
 
 // Main kernel program
-__kernel void flockingSimulation(__global int *image,
-	__global int *surface,
-	int maxGray)
+__kernel void flockingSimulation(__global Bird *flock, __global int *number_of_birds)
 {
 	// Global ids
 	int gid_0 = get_global_id(0);
-	int gid_1 = get_global_id(1);
-
-	int global_size_0 = get_global_size(0);
+	//int gid_1 = get_global_id(1);
 
 	// Local ids
 	//int lid_0 = get_local_id(0);
 	//int lid_1 = get_local_id(1);
 
-
-
-	// Iterate over threads birds
-	if(gid_0 < global_size_0) {
-		Bird *currentBird = input->birdArray[gid_0];
-
-		// Calculate new position
-		currentBird->calculate(&currentBird, input->birdArray, input->n);
-
-		// Move bird
-		currentBird->update(&currentBird);
-
-		// Rotate bird
-		currentBird->rotate(&currentBird);
-
-		// Check for borders
-		currentBird->borders(&currentBird);
+	
+	if (gid_0 == 0) {
+		volatile __global float *pointer = &(flock[0].position.x);
+		atom_add(pointer, 3);
+		volatile __global float *pointer1 = &(flock[0].position.y);
+		atom_add(pointer1, 3);
 	}
 
+	// Iterate over threads birds
+	/*if(gid_0 < *number_of_birds) {
+		__global Bird *currentBird = &(flock[gid_0]);
 
+		// Calculate new position
+		Bird_calculate(currentBird, flock, *number_of_birds);
+
+		// Move bird
+		Bird_update(currentBird);
+
+		// Rotate bird
+		Bird_rotate(currentBird);
+
+		// Check for borders
+		Bird_borders(currentBird);
+
+		
+	}*/
+
+	
 }
