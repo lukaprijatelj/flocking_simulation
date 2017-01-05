@@ -11,9 +11,9 @@
 #define ALLIGNMENT_DISTANCE 50.0 
 #define COHESION_DISTANCE 50.0 
 
-#define MAX_SPEED 0.133333f
-#define MAX_FORCE 0.003f
-#define BIRD_RADIUS 5.0f  // Radius of the bird (I have choose MAX point of bird triangle points)
+#define MAX_SPEED 0.133333
+#define MAX_FORCE 0.003
+#define BIRD_RADIUS 5.0  // Radius of the bird (I have choose MAX point of bird triangle points)
 
 #define WINDOW_SIZE_X 1280
 #define WINDOW_SIZE_Y 720
@@ -274,7 +274,7 @@ void Bird_borders(__global Bird *currentBird)
 
 
 // Main kernel program
-__kernel void flockingSimulation(__global Bird *flock, __global Bird *flock __global int *number_of_birds)
+__kernel void flockingSimulation(__global Bird *flock, int number_of_birds)
 {
 	// Global ids
 	int gid_0 = get_global_id(0);
@@ -284,15 +284,14 @@ __kernel void flockingSimulation(__global Bird *flock, __global Bird *flock __gl
 	//int lid_0 = get_local_id(0);
 	//int lid_1 = get_local_id(1);
 
-	
 
 
 	// Iterate over threads birds
-	if(gid_0 < *number_of_birds) {
+	if(gid_0 < number_of_birds) {
 		__global Bird *currentBird = &(flock[gid_0]);
 
 		// Calculate new position
-		Bird_calculate(currentBird, flock, *number_of_birds);
+		Bird_calculate(currentBird, flock, number_of_birds);
 
 		// Move bird
 		Bird_update(currentBird);

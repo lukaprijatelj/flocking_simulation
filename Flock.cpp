@@ -28,7 +28,7 @@ void Flock::reportBird(struct Bird bird)
 }
 
 void Flock::generate(Dimension windowDimension) {
-	birds = (Bird *)malloc(number_of_birds * sizeof(Bird));
+	birds = (Bird *)calloc(number_of_birds, sizeof(Bird));
 	srand(time(NULL));
 
 	// Layout birds on the canvas
@@ -102,8 +102,7 @@ void Flock::initGPU() {
 void Flock::buildKernel() {
 
 	/* Alokacija pomnilnika na napravi */
-	flock_obj = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, number_of_birds * sizeof(Bird), birds, &ret); // (kontekst, naèin, koliko, lokacija na hostu, napaka)
-	flock_new_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, number_of_birds * sizeof(Bird), NULL, &ret); // (kontekst, naèin, koliko, lokacija na hostu, napaka)
+	flock_obj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, number_of_birds * sizeof(Bird), birds, &ret); // (kontekst, naèin, koliko, lokacija na hostu, napaka)
 
 	/* Priprava programa */
 	program = clCreateProgramWithSource(context, 1, (const char **)&source_str, NULL, &ret); // (kontekst, "stevilo kazalcev na kodo, kazalci na kodo, stringi so NULL terminated, napaka)													
@@ -125,8 +124,7 @@ void Flock::buildKernel() {
 
 	// šèepec: argumenti
 	clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&flock_obj); // (šèepec, številka argumenta, velikost podatkov, kazalec na podatke)
-	clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&flock_new_obj); // (šèepec, številka argumenta, velikost podatkov, kazalec na podatke)
-	clSetKernelArg(kernel, 2, sizeof(cl_int), (void *)&number_of_birds); // (šèepec, številka argumenta, velikost podatkov, kazalec na podatke)
+	clSetKernelArg(kernel, 1, sizeof(int), (void *)&number_of_birds); // (šèepec, številka argumenta, velikost podatkov, kazalec na podatke)
 
 	// Calculate closest power of 2 needed for global item size
 	unsigned int closest_power_of_2 = number_of_birds;

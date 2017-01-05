@@ -29,7 +29,7 @@ struct Bird {
 class Flock
 {
 public:
-	int number_of_birds = 200;
+	int number_of_birds = 5000;
 	Bird *birds;
 
 	// OpenCL properties
@@ -44,7 +44,6 @@ public:
 	size_t global_item_size[1];
 	Dimension window_dimensions;
 	cl_mem flock_obj;
-	cl_mem flock_new_obj;
 
 
 	Flock();
