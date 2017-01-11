@@ -10,6 +10,7 @@
 #include <math.h>
 #include "Flock.h"
 #include <time.h>
+#include <mpi.h>
 
 
 using namespace std;
@@ -18,12 +19,17 @@ void print_stats(float avg_loop_time) {
 	cout << '\r' << "Avg loop time: " << avg_loop_time << flush;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	int my_rank; // rank (oznaka) procesa 
+	int num_of_processes; // stevilo procesov 	
 	Graphics_manager *graphics_manager = new(Graphics_manager);
 	Flock flock = Flock();
 	Dimension window_dimension = graphics_manager->getDimensions();
 	uint64_t loop_count = 0;
 
+	MPI_Init(&argc, &argv); // inicializacija MPI okolja 
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank); // zaporedna stevilka processa (od 0 do num_of_processes-1)
+	MPI_Comm_size(MPI_COMM_WORLD, &num_of_processes); // stevilo processov, ki se izvajajo
 
 	// Generate all N number of birds and layout them on canvas.
 	// Layout dimensions will be same as one of the window.
