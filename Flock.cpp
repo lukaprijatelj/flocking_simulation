@@ -60,10 +60,12 @@ void Flock::generateGrid(Dimension windowDimension, int cell_size) {
 
 void Flock::distributeBirds() {
 	int i = 0;
+
 	// Reset counts
 	for (int i = 0; i < grid_size.width*grid_size.height; i++) {
 		this->birds_per_grid[i] = 0;
 	}
+
 	// Distribute birds
 	for (i = 0; i < number_of_birds; i++) {
 		int cell_x = (birds[i]->position.x + (window_size.width / 2)) / cell_size;
@@ -76,8 +78,13 @@ void Flock::distributeBirds() {
 }
 
 void Flock::run() {
+
 	this->distributeBirds();
-	#pragma omp parallel for
+
+	
+	// Send values/numbers to all processes
+	MPI_Scatterv(stevila, sendcnts, disps, MPI_INT, received, sendcnts[my_rank], MPI_INT, 0, MPI_COMM_WORLD);
+
 	for (int i = 0; i < number_of_birds; i++) {
 		birds[i]->run(grid, birds_per_grid, grid_size, cell_size);
 	}

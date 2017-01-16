@@ -10,6 +10,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Flock.h"
+#include <mpi.h>
 
 
 using namespace std;
@@ -19,11 +20,18 @@ void print_stats_deprecated(double calculation_time, double draw_time, float fps
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
+	// MPI variables
+	int my_rank; // rank (oznaka) procesa 
+	int num_of_processes; // stevilo procesov 	
+
+	// Testing variables
 	int flock_size = 1000;
 	int step_size = 200;
 	int steps = 10;
 	float step_runtime = 5.0f;
+
+	
 
 	for (int i = 0; i < steps; i++) {
 		Graphics_manager *graphics_manager = new(Graphics_manager);
@@ -31,12 +39,15 @@ int main() {
 		Dimension window_dimension = graphics_manager->getDimensions();
 		uint64_t loop_count = 0;
 
+		// Initialize MPI
+		MPI_Init(&argc, &argv); // inicializacija MPI okolja 
+		MPI_Comm_rank(MPI_COMM_WORLD, &my_rank); // zaporedna stevilka processa (od 0 do num_of_processes-1)
+		MPI_Comm_size(MPI_COMM_WORLD, &num_of_processes); // stevilo processov, ki se izvajajo
 
 		// Generate all N number of birds and layout them on canvas.
 		// Layout dimensions will be same as one of the window.
 		flock.generate(window_dimension);
 		flock.generateGrid(window_dimension, 50);
-
 
 		// Start iterations
 		clock_t begin_time = clock();
@@ -64,6 +75,9 @@ int main() {
 
 		// Cleanup
 		delete graphics_manager;
+
+		// Clear MPI
+		MPI_Finalize();
 
 		flock_size += step_size;
 	}

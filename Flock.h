@@ -18,7 +18,6 @@ public:
 	Dimension grid_size;
 	Dimension window_size;
 
-	Flock();
 	Flock(int size);
 	~Flock();
 
