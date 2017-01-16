@@ -18,6 +18,9 @@ Parallel algorithms can be found in different branches of same repository.
 - [OpenCL for VS] http://kode-stuff.blogspot.si/2012/11/setting-up-opencl-in-visual-studio_1.html
 - [OpenMPI for VS] https://msdn.microsoft.com/en-us/library/bb524831(v=vs.85).aspx
  
+## Screenshot
+![alt tag](https://raw.githubusercontent.com/gaskolar/flocking_simulation/master/Images/flocking_simulation.png)
+ 
 ## Some Links
  - http://www.cse.buffalo.edu/faculty/miller/Courses/CSE633/Cosgrove-Spring-2014-CSE633.pdf
  - [Best explanation] https://gamedevelopment.tutsplus.com/tutorials/3-simple-rules-of-flocking-behaviors-alignment-cohesion-and-separation--gamedev-3444
