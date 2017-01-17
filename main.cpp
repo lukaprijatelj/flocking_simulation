@@ -1,17 +1,21 @@
-//#include "glad.h"
-//#include "GLFW/glfw3.h"
+// Set to false and recompile to remove graphics stuff 
+#define RUN_WITH_GRAPHICS false
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <time.h>
 #include "bird.h"
-#include "graphics_manager.h"
 #include "Vector.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Flock.h"
 #include <mpi.h>
+#if RUN_WITH_GRAPHICS == true
+#include "graphics_manager.h"
+#endif
 
+#define BUFSIZ 2000
 
 using namespace std;
 
@@ -20,92 +24,139 @@ void print_stats_deprecated(double calculation_time, double draw_time, float fps
 }
 
 
+bool handleErr(int err) {
+	if (err != MPI_SUCCESS) {
+		char error_string[BUFSIZ];
+		int length_of_error_string;
+
+		int my_rank;
+		MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+		MPI_Error_string(err, error_string, &length_of_error_string);
+		fprintf(stderr, "MPI Error (%d): %s\n", my_rank, error_string);
+		exit(EXIT_SUCCESS);
+	}
+	return false;
+}
+
 int main(int argc, char *argv[]) {
 	// Initialize MPI
-	MPI_Init(&argc, &argv); // inicializacija MPI okolja 
+	MPI_Init(&argc, &argv);
 
-	// MPI variables
-	int my_rank; // rank (oznaka) procesa 
-	int num_of_processes; // stevilo procesov
+	// Prepare MPI variables
+	int my_rank; 
+	int num_of_processes; 
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &num_of_processes);
 
-	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank); // zaporedna stevilka processa (od 0 do num_of_processes-1)
-	MPI_Comm_size(MPI_COMM_WORLD, &num_of_processes); // stevilo processov, ki se izvajajo
+	// Runtime variables 
+	uint64_t loop_couner = 0;			// Loop counter
+	uint64_t iteration_count = 3000;	// Number of iterations to run
+	float max_runtime = 100.0f;			// The max number of seconds the program is allowed to run
 
-	int flock_size = 5;
-	int bird_num_of_floats = 4;
-	float step_runtime = 5.0f;
+	// Prepare local variables
+	int flock_size = 1000;												// Flock size
+	int bird_num_of_floats = 4;											// Number of floats needed to descrivbe a bird
+	int calculated_birds_per_process = flock_size / num_of_processes;	// stevilo pticev na processor
+	int num_of_additional_birds = flock_size % num_of_processes;		// stevilo processorjev ki bo moralo poracunati dodatnega ptica
+	Dimension window_dimension = Dimension(1280, 720);					// Window dimensions
+	
+	// Prepare flock with grid
+	Flock flock = Flock(flock_size);
+	flock.generateGrid(window_dimension, 50);
+
+#if RUN_WITH_GRAPHICS == true
+	Graphics_manager *graphics_manager = NULL;
+#endif
+	
+	// Prepare return data tables
+	int calculated_birds_table_size = (calculated_birds_per_process + 1) * bird_num_of_floats;
+	float *calculated_bird_data = new float[calculated_birds_table_size];
 
 	// Prepare table of bird data nums
 	int table_size = flock_size * bird_num_of_floats;
 	float *bird_data = new float[table_size];
 
+	// Generate and randomize bird positions
 	if (my_rank == 0) {
-		Graphics_manager *graphics_manager = new(Graphics_manager);
-		Flock flock = Flock(flock_size);
-		Dimension window_dimension = graphics_manager->getDimensions();
-		uint64_t loop_count = 0;
-
-		// Generate all N number of birds and layout them on canvas.
-		// Layout dimensions will be same as one of the window.
+#if RUN_WITH_GRAPHICS == true
+			graphics_manager = new(Graphics_manager);
+#endif
 		flock.generate(window_dimension);
-		for (int i = 0, j = 0; i < flock_size; i++) {
-			flock.birds[i]->report();
-		}
+	}
 
-		// Calculate bird data
-		for (int i = 0, j= 0; i < flock_size; i++) {
-			bird_data[j++] = flock.birds[i]->position.x;
-			bird_data[j++] = flock.birds[i]->position.y;
-			bird_data[j++] = flock.birds[i]->velocity.x;
-			bird_data[j++] = flock.birds[i]->velocity.y;
-		}
+	// Measue start time
+	clock_t begin_time = clock();
 
-		//flock.generateGrid(window_dimension, 50);
-
-		int err = MPI_Bcast(bird_data, table_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-		if (err != 0){
-			cout << "MPI Error on Bcast 0: " << err << endl;
-		}
-
-		// Start iterations
-		/*clock_t begin_time = clock();
-		while (graphics_manager->loop()) {
-			loop_count++;
-
-			//clock_t begin_draw_time = clock();
-			graphics_manager->draw_birds(flock.birds, flock.number_of_birds);
-			graphics_manager->swap_buffers();
-			//clock_t end_draw_time = clock();
-
-			// Recalculates positions for all birds in the flock.
-			//clock_t begin_calculation_time = clock();
-			flock.run();
-			//clock_t end_calculation_time = clock();
-
-			//double calculation_time = double(end_calculation_time - begin_calculation_time) / CLOCKS_PER_SEC;
-			//double draw_time = double(end_draw_time - begin_draw_time) / CLOCKS_PER_SEC;
-			float runtime = (float(clock() - begin_time) / CLOCKS_PER_SEC);
-			if (runtime > step_runtime) {
-				cout << flock_size << " " << 1.0f / (runtime / loop_count) << endl << flush;
-				break;
+	// Begin iterations. Run iteration count loops. Or at most max_runtime seconds.
+	while ( (loop_couner < iteration_count) && ( (float(clock() - begin_time) / CLOCKS_PER_SEC) < max_runtime) ) {
+		loop_couner++;
+		// Prepare bird data for sending (we send a table of floats)
+		if (my_rank == 0) {
+			for (int i = 0, j = 0; i < flock_size; i++) {
+				bird_data[j++] = flock.birds[i]->position.x;
+				bird_data[j++] = flock.birds[i]->position.y;
+				bird_data[j++] = flock.birds[i]->velocity.x;
+				bird_data[j++] = flock.birds[i]->velocity.y;
 			}
 		}
-		*/
-		// Cleanup
-		delete graphics_manager;
-	} else {// end my_rank == 0
+		// Distribute all birds
 		int err = MPI_Bcast(bird_data, table_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-		if (err != 0) {
-			cout << "MPI Error on scatter -0: " << err << endl;
+		handleErr(err);
+		// Convert table of floats back to a flock
+		if (my_rank != 0) {
+			flock.generateFromNumberTable(window_dimension, bird_data);
 		}
-		for (int i = 0; i < table_size; i++) {
-			cout << bird_data[i] << endl;
+		// Distribute birds in GRID
+		flock.distributeBirds();
+		// Calculate new bird positions
+		int num_of_calculated = flock.run(my_rank, num_of_processes);
+
+		if (my_rank == 0) {
+			// Receive new bird positions from all processors
+			for (int i = 1; i < num_of_processes; i++) {
+				err = MPI_Recv(calculated_bird_data, calculated_birds_table_size, MPI_FLOAT, i, i, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+				handleErr(err);
+				// Update bird positions in master flock
+				int num_of_valid_birds = (i < num_of_additional_birds) ? calculated_birds_per_process + 1 : calculated_birds_per_process;
+				for (int j = 0, k = i, l = 0; j < num_of_valid_birds; j++, k += num_of_processes) {
+					flock.birds[k]->position.x = calculated_bird_data[l++];
+					flock.birds[k]->position.y = calculated_bird_data[l++];
+					flock.birds[k]->velocity.x = calculated_bird_data[l++];
+					flock.birds[k]->velocity.y = calculated_bird_data[l++];
+				}
+			}
 		}
+		else {
+			// Prepare bird data for sending (we send a table of floats)
+			for (int i = 0, j = my_rank, k = 0; i < num_of_calculated; i++, j += num_of_processes) {
+				calculated_bird_data[k++] = flock.birds[j]->position.x;
+				calculated_bird_data[k++] = flock.birds[j]->position.y;
+				calculated_bird_data[k++] = flock.birds[j]->velocity.x;
+				calculated_bird_data[k++] = flock.birds[j]->velocity.y;
+			}
+			// Send new positions back to master
+			err = MPI_Send(calculated_bird_data, calculated_birds_table_size, MPI_FLOAT, 0, my_rank, MPI_COMM_WORLD);
+			handleErr(err);
+		}
+#if RUN_WITH_GRAPHICS == true
+		if (my_rank == 0) {
+			graphics_manager->draw_birds(flock.birds, flock.number_of_birds);
+			graphics_manager->swap_buffers();
+		}
+#endif
+	}
+
+	if (my_rank == 0) {
+#if RUN_WITH_GRAPHICS == true
+		delete graphics_manager;
+#endif
+		// Report
+		float avg_fps = (1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_couner));
+		printf("Avg FPS: %f\n", avg_fps);
+		fflush(stdout);
 	}
 
 	// Clear MPI
 	MPI_Finalize();
-
-	system("pause");
-	//exit(EXIT_SUCCESS);
 }

@@ -20,10 +20,10 @@ public:
 
 	Flock(int size);
 	~Flock();
-
-	void run();
 	void generate(Dimension);
+	void generateFromNumberTable(Dimension windowDimension, float * table);
 	void generateGrid(Dimension, int);
 	void distributeBirds();
+	int run(int my_rank, int num_of_procesors);
 };
 
