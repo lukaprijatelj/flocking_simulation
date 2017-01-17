@@ -16,6 +16,19 @@ Bird::Bird(Dimension win)
 	color.blue = 1.00f;
 }
 
+Bird::Bird(Dimension win, float pos_x, float pos_y, float vel_x, float vel_y) {
+	window_dimensions = win;
+
+	position = Vector(pos_x, pos_y);
+	acceleration = Vector();
+	velocity = Vector(vel_x, vel_y);
+	rotation = 0.0f;
+
+	color.red = 0.30f;
+	color.green = 0.00f;
+	color.blue = 1.00f;
+}
+
 Bird::~Bird() {}
 
 void Bird::report() 

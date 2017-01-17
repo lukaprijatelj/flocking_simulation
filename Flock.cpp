@@ -4,7 +4,6 @@
 
 Flock::Flock(int size)
 {
-	omp_set_num_threads(4);
 	number_of_birds = size;
 }
 
@@ -13,6 +12,31 @@ Flock::~Flock()
 }
 
 void Flock::generate(Dimension windowDimension) {
+	birds = new Bird*[number_of_birds];
+	srand(time(NULL));
+
+	// Layout birds on the canvas
+	for (int i = 0; i < number_of_birds; i++) {
+		birds[i] = new Bird(windowDimension);
+
+		float x = float(rand()) / RAND_MAX * windowDimension.width;
+		float y = float(rand()) / RAND_MAX * windowDimension.height;
+
+		birds[i]->position.x = x - windowDimension.width / 2;
+		birds[i]->position.y = y - windowDimension.height / 2;
+
+		Vector velocityV = Vector();
+		velocityV.x = rand();
+		velocityV.y = rand();
+		velocityV.normalize(birds[i]->MAX_SPEED);
+		birds[i]->velocity = velocityV;
+		birds[i]->rotate();
+
+		//birds[i]->report();
+	}
+}
+
+void Flock::generateFromNum(Dimension windowDimension) {
 	birds = new Bird*[number_of_birds];
 	srand(time(NULL));
 
@@ -83,7 +107,7 @@ void Flock::run() {
 
 	
 	// Send values/numbers to all processes
-	MPI_Scatterv(stevila, sendcnts, disps, MPI_INT, received, sendcnts[my_rank], MPI_INT, 0, MPI_COMM_WORLD);
+	//MPI_Scatterv(stevila, sendcnts, disps, MPI_INT, received, sendcnts[my_rank], MPI_INT, 0, MPI_COMM_WORLD);
 
 	for (int i = 0; i < number_of_birds; i++) {
 		birds[i]->run(grid, birds_per_grid, grid_size, cell_size);

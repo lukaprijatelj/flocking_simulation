@@ -32,6 +32,7 @@ public:
 	Dimension window_dimensions;
 
 	Bird(Dimension);
+	Bird::Bird(Dimension, float, float, float, float);
 	~Bird();
 
 	// General
