@@ -27,6 +27,7 @@
 \usepackage[utf8x]{inputenc}   % omogoča uporabo slovenskih črk kodiranih v formatu UTF-8
 \usepackage[slovene,english]{babel}    % naloži, med drugim, slovenske delilne vzorce
 \usepackage[pdftex]{graphicx}  % omogoča vlaganje slik različnih formatov
+\graphicspath{ {images/} }
 \usepackage{fancyhdr}          % poskrbi, na primer, za glave strani
 \usepackage{amssymb}           % dodatni simboli
 \usepackage{amsmath}           % eqref, npr.
@@ -34,13 +35,13 @@
 \usepackage[hyphens]{url}  % dodal Solina
 \usepackage{comment}       % dodal Solina
 
+% Psevdokoda %
 \usepackage{amsmath}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
+
+
 
 \usepackage[pdftex, colorlinks=true,
 						citecolor=black, filecolor=black, 
@@ -272,201 +273,72 @@ Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranim
 \end{algorithmic}
 \end{algorithm}
 
-
-\chapter{Sklicevanje na besedilne konstrukte}
+\chapter{Serijska implementacija}
 \label{ch1}
+\section{Osnovna implementacija}
+Razvoj osnovne implementacije ni predstavljal večjih izzivov. Za razvoj smo uporabili Microsoftov Visual Studio 2015 integrirano razvojno okolje, ki se je izkazalo za zelo koristno, posebno pri odpravljanju hroščev. Nekoliko težav smo imeli le z grafičnim izrisovanjem jate ptic. Saj smo se avtorji tokrat privič srečali z grafično knjižnico OpenGL. Poleg OpenGL smo uporabili še GLFW knižnjico , ki poskrbi za kreiranje grafičnega okna. Končen rezulatat je prikazan na Sliki~\ref{img:flocking_simulation_demo}. Po približno 10 sekundah leta so se ptice, iz popolnoma naključnih pozicij združile v jate.
 
-Matematična ali popolna indukcija je eno prvih orodij, ki jih spoznamo za dokazovanje trditev pri matematičnih predmetih.
-\begin{izrek}
-\label{iz:1}
-Za vsako naravno število $n$ velja
-\begin{equation}
-n < 2^n.
-\label{eq:1}
-\end{equation}
-\end{izrek}
-\begin{dokaz}
-Dokazovanje z indukcijo zahteva, da neenakost~\eqref{eq:1} najprej preverimo za najmanjše naravno število -- $0$. 
-Res, ker je $0 < 1 = 2^0$, je neenačba~\eqref{eq:1} za $n=0$ izpolnjena.
+Glavna podatkovna struktura programa je $ptica$. $ptica$ zajema vse podatke ki so potrebni za opis ene ptice v prostoru. To sta torej dva dvo-dimenzionalna vektorja $pozicija$ in $smer$. Struktura $jata$ pa združi vse ptice v tabelo $ptic$.
 
-Sledi indukcijski korak. S predpostavko, da je neenakost~\eqref{eq:1} veljavna pri nekem naravnem številu $n$, je potrebno pokazati, da je ista neenakost v veljavi tudi pri njegovem nasledniku -- naravnem številu $n+1$. 
-Računajmo.
-\begin{align}
-n+1 & < 2^n + 1       \label{eq:2}\\
-       & \le 2^n + 2^n \label{eq:3}\\
-       & = 2^{n+1}       \nonumber
-\end{align}
-Neenakost~\eqref{eq:2} je posledica indukcijske predpostavke, neenakost~\eqref{eq:3} pa enostavno dejstvo, da je za vsako naravno število $n$ izraz $2^n$ vsaj tako velik kot 1. 
-S tem je dokaz Izreka~\ref{iz:1} zaključen.
-\end{dokaz}
+Serijska implementacija potrebuje kot vhodni podatek le število ptic. Glede na število ptic se ustvari ustrezno velika $jata$.
 
-Opazimo, da je \LaTeX\ številko izreka podredil številki poglavja.
+%TODO Dodaj tabelo meritev%
+%TODO Dodaj graf meritev%
 
-
-\chapter{Plovke: slike in tabele}
-\label{ch2}
-
-Slike in daljše tabele praviloma vključujemo v dokument kot plovke. 
-Pozicija plovke v končnem izdelku ni pogojena s tekom besedila, temveč z izgledom strani. 
-\LaTeX\ bo skušal plovko postaviti samostojno, praviloma na vrh strani, na kateri se na takšno plovko prvič sklicujemo. 
-Pri tem pa bo na vsako stran končnega izdelka želel postaviti tudi sorazmerno velik del besedila. 
-V skrajnem primeru, če imamo res preveč plovk, se bo odločil za stran popolnoma zapolnjeno s plovkami.
-
-Poleg tega, da na položaj plovke vplivamo s tem, kam jo umestimo v izvorno besedilo, lahko na položaj plovke na posamezni strani prevedenega besedila dodatno vplivamo z opcijami \texttt{here, top} in \texttt{bottom}.
-Sklic na plovko v besedilu in sama plovka naj bosta čimbližje skupaj, tako da bralcu ne bo potrebno listati po diplomi.
-
-
-\section{Formati slik}
-
-Bitne slike, vektorske slike, kakršnekoli slike, z \LaTeX{}om lahko vključimo vse.
-Slika~\ref{pic1} je v {\tt .pdf} formatu.
-\begin{figure}[htb]
-\begin{center}
-\includegraphics[width=10cm]{pic1.pdf}
-\end{center}
-\caption{Herschelov graf, vektorska grafika.}
-\label{pic1}
-\end{figure}
-Pa res lahko vključimo slike katerihkoli formatov? 
-Žal ne. 
-Programski paket \LaTeX\ lahko uporabljamo v več dialektih. 
-Ukaz {\tt latex} ne mara vključenih slik v formatu Portable Document Format {\tt .pdf}, ukaz {\tt pdflatex} pa ne prebavi slik v Encapsulated Postscript Formatu {\tt .eps}.
-Strnjeno v Tabeli~\ref{tbl:1}.
-
-\begin{table}
-\begin{center}
-\begin{tabular}{l|ccc}
-ukaz/format & {\tt .pdf} & {\tt .eps} & ostali formati \\ \hline
-{\tt pdflatex} & da & ne & da \\
-{\tt latex}   & ne & da  & da
-\end{tabular}
-\end{center}
-\caption{}
-\label{tbl:1}
-\end{table}
-
-Nasvet? 
-Odločite se za uporabo ukaza {\tt pdflatex}. Vaš izdelek bo brez vmesnih stopenj na voljo v {.pdf} formatu in ga lahko odnesete v vsako tiskarno. 
-Če morate na vsak način vključiti sliko, ki jo imate v {\tt .eps} formatu, jo vnaprej pretvorite v alternativni format, denimo {\tt .pdf}.
-
-Včasih se da v okolju za uporabo programskega paketa \LaTeX\ nastaviti na kakšen način bomo prebavljali vhodne dokumente. 
-Spustni meni na Sliki~\ref{pic2} odkriva uporabo \LaTeX{}a v njegovi pdf inkarnaciji --- {\tt pdflatex}.
 \begin{figure}[t]
-\begin{center}
-\includegraphics[width=10cm]{pic2.png}
-\end{center}
-\caption{Kateri dialekt uporabljati?}
-\label{pic2}
+\includegraphics[width=\textwidth]{flocking_simulation_demo}
+\caption{Slika je bila zajeta po približno 10 sekundah prostega leta. Ptice so se združile v jate.}
+\label{img:flocking_simulation_demo}
+\centering
 \end{figure}
-Vključena Slika~\ref{pic2} je seveda bitna.
 
+\section{Implementacija z mrežo}
+Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem pohitrimo. To smo naredili z implementacijo nove podatkovne strukture mreža (ang. Grid). Iz popravljene psevdokode \ref{serial_grid_pseudo_code} algorirma je razvidno, da se vsako iteracijo ptice najprej razporedi v mrežo na to pa se izračunajo nova stanja ptic. Mreža je ilustrirana na Sliki~\ref{img:flocking_simulation_grid}. Velikost celice je določena z doložino lokalnosti. To je maksimalna razdalja med pticama ki še vedno vplivata druga na drugo. Za računanje novih stanj ptic v neki celici so tako potrebne le ptice v isti in sosednjih celicah. Uporabi se 8-kratna sosednost.
 
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{flocking_simulation_grid}
+\caption{Ilustracija mrežne. Za računanje nove pozicije se uporabi 8-kratna sosednjost. To pomeni, da se za izračun novi stanj ptic v celici $e$ upurabijo ptice iz celic $a, b, c, d, e, f, g, h, i$}
+\label{img:flocking_simulation_grid}
+\centering
+\end{figure}
 
-\chapter{Pogoste napake pri pisanju v slovenščini}  % poglavje dodal Solina
-\label{slo}
+%TODO Vstvi tabelo meritev%
+%TODO Vstavi graf meritev%
+%TODO Vstavi graf primerjave med navadno in grid%
 
-V slovenščini pišemo narekovaje drugače kot v angleščini!   
-Običajno uporabljamo dvojne spodnje-zgornje narekovaje:  \sn{slovenski narekovaji}.
+\begin{algorithm}
+\caption{Groba psevdo koda serijskega algoritma z uporabo mreže}\label{serial_grid_pseudo_code}
+\begin{algorithmic}[1]
+\State $N \gets \text{Stevilo ptic}$
+\State $trenutnoStanje \gets \textit{ptice[N]}$
+\State $naslendjeStanje \gets \textit{ptice[N]}$
+\Loop
+\State $mrezaPtic \gets$ razporediPticeVMrezo($trenutnoStanje);$
+\For{$i \gets 0; i < N; i++$}
+\State $naslendjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], mrezaPtic);$
+\EndFor
+\State izrisiStanje(naslendjeStanje);
+\State $trenutnoStanje[i] \gets naslendjeStanje;$
+\EndLoop
+\end{algorithmic}
+\end{algorithm}
 
-Paziti moramo pri uporabi pridevnikov, ki se ne sklanjajo kot so npr. kratice. 
-Zato pišemo pravilno model CAD in \textbf{ne} CAD model!
+\chapter{Paralelna implementacija z uporabo pThreads}
+\label{ch2}
+TODO...
 
-Pika, klicaj in vprašaj so levostični: pred njimi ni presledka, za njimi pa. 
-Klicajev in vprašajev se v strokovnih besedilih načeloma izogibajte. Oklepaji so desnostični in zaklepaji levostični (takole).
+\chapter{Paralelna implementacija z uporabo OpenMP}
+\label{ch3}
+TODO...
 
-Pri sklanjanju tujih imen ne uporabljajte vezajev, pravilno je Applov operacijski sistem in \textbf{ne} Apple-ov.
+\chapter{Paralelna implementacija z uporabo OpenCL}
+\label{ch4}
+TODO...
 
-Vezaj  je levo in desno stičen: \verb=slovensko-angleški slovar= in ga pišemo z enim pomišljajem.
+\chapter{Paralelna implementacija z uporabo MPI}
+\label{ch5}
+TODO...
 
-V slovenščini je pred in po pomišljaju presledek in ga v LaTeXu pišemo z dvema pomišljajema: \verb=Pozor -- hud pes!=
-V angleščini pa je za razliko pomišljaj levo in desno stičen in se v LaTeXu piše s tremi  pomišljaji: \verb=---=.
-S stičnim pomišljajem pa lahko nadomeščamo predlog od \dots do, denimo pri navajanju strani, npr. preberite strani 7--11 (\verb=7--11=).
-
-
-
-\sn{Pred ki, ko, ker, da, če vejica skače}. To osnovnošolsko pravilo smo v življenju po potrebi uporabljali, dopolnili, morda celo pozabili. 
-Pravilo sicer drži, ampak samo če je izpolnjenih kar nekaj pogojev (npr. da so ti vezniki samostojni, enobesedni, ne gre za vrivek itd.).
-Povedki so med seboj ločeni z vejicami, razen če so zvezani z in, pa, ter, ne–ne, niti–niti, ali, bodisi, oziroma.
-Sicer pa je bolje pisati kratke stavke kot pretirano dolge.
-
-
-\chapter{Koristni nasveti pri pisanju v \LaTeX{u}}   % poglavje dodal Solina
-\label{latex}
-
-Programski paket \LaTeX\ je prvotno predstavljen v priročniku~\cite{lamport} in je v resnici nadgradnja sistema \TeX\ avtorja Donalda Knutha, znanega po denimo, če izpustim njegovo umetnost programiranja, 
-Knuth-Bendixovem algoritmu~\cite{knuth1983simple}.
-
-Različnih implementacij \LaTeX{}a je cela vrsta.
-Za OS X priporočamo TeXShop, za Windows PC pa MikTeX. Spletna verzija, ki poenostavi sodelovanje pri pisanju, je ShareLaTeX.
-
-Včasih smo si pri pisanju v \LaTeX{}u  pomagali s priročniki, danes pa je enostavneje in hitreje, da ob vsakem problemu za pomoč enostavno povprašate Google, saj je na spletu cela vrsta forumov za pomoč pri \TeX{}iranju.
-
-\LaTeX\ včasih ne zna deliti slovenskih besed, ki vsebujejo črke s strešicami. Če taka beseda štrli preko desnega roba,  \LaTeX{}u pokažemo, kje lahko tako besedo deli takole: \verb=ra\-ču\-nal\-ni\-štvo=.
-
-Predlagamo, da v izvornem besedilu začenjate vsak stavek v novi vrstici, saj \LaTeX\ sam razporeja besede po vrsticah postavljenega besedila. 
-Bo pa zato iskanje po izvornem besedilu iskanje in popravljanje veliko hitrejše.
-
-Boljšo preglednost dosežemo tudi z izpuščanjem praznih vrstic za boljšo preglednost strukture izvornega besedila.
-
-S pomočjo  okolja \verb=\begin{comment} ... \end{comment}= lahko  zakomentiramo več vrstic izvornega besedila hkrati.
-
-
-
-
-\chapter{Kaj pa literatura?}
-\label{lit}
-
-Kot smo omenili že v uvodu, je pravi način za citiranje literature uporaba \BibTeX{}a~\cite{bib}. 
-\BibTeX\ zagotovi, da nobene obvezne informacije pri določeni vrsti literature ne izpustimo in da vse informacije o določeni vrsti vira dosledno navajamo na enak način.
-
-Osnovna ideja \BibTeX{a} je, da vse informacije o literaturi zapisujete v posebno datoteko, v našem primeru je to \texttt{literatura.bib}.
-Vsakemu viru v tej datoteki določimo simbolično ime.
-V  našem primeru je v tej datoteki nekaj najbolj značilnih vrst literature, kot so knjige~\cite{lamport}, članki v revijah~\cite{leonardo} in zbornikih konferenc~\cite{poglavje_springer}, spletni viri~\cite{bib,video}, 
-tehnično poročilo~\cite{andersen2012kinect}, diplome~\cite{diploma} itd.
-Po vsaki spremembi pri sklicu na literaturo moramo najprej prevesti izvorno besedilo s prevajalnikom \LaTeX, nato s prevajalnikom  \BibTeX, ki ustvari datoteko  {\tt vzorec\_dip\_Seminar.bbl}, in nato še dvakrat s prevajalnikom  \LaTeX.
-
-Kako natančno se spisek literature nato izpiše (ali po vrstnem redu sklicevanja, ali po abecedi priimkov prvih avtorjev, ali se imena avtorjev pišejo pred priimki itd.) je odvisno od stilske datoteke.
-V diplomi bomo uporabili osnovno stilsko datoteko \texttt{plain}.
-
-Z uporabo \BibTeX{a} v slovenščini je še nekaj nedoslednosti, saj so pomožne besede, ki jih \BibTeX\ sam doda,  kot so \textit{editor},  \textit{pages} in besedica  \textit{and} pred zadnjim avtorjem, 
-če ima vir več avtorjev~\cite{andersen2012kinect}, zapisane v angleščini,
-čeprav smo izbrali opcijo \texttt{slovene} pri paketu \texttt{babel}.
-To nedoslednost je možno popraviti z ročnim urejanjem datoteke {\tt vzorec\_dip\_Seminar.bbl}, kar je smiselno šele potem, ko bibliografije v datoteki \texttt{literatura.bib} ne bomo več spreminjali, oziroma ne bomo več dodajali novih sklicev na literaturo
-v izvornem besedilu.
-Vsebino datoteke {\tt vzorec\_dip\_Seminar.bbl} lahko na koncu urejanja tudi skopirate v izvorno besedilo diplome.
-
-Le če se bomo na določen vir v besedilu tudi sklicevali, se bo pojavil tudi v spisku literature.
-V datoteki \texttt{.bib} imamo sicer lahko veliko več virov za literaturo, kot jih bomo uporabili v diplomi.
-
-Vire v \BibTeX\ formatu lahko enostavno poiščemo in prekopiramo iz akademskih portalov za iskanje virov v našo datoteko \texttt{.bib}.
-Izvoz v Google učenjaku še dodatno poenostavimo, če v nastavitvah izberemo \BibTeX\ kot želeni format za izvoz navedb.
-
-Pri sklicevanju na literaturo na koncu stavka pazite, da je pika po ukazu \verb=\cite{ }=.
-\chapter{Sistem STUDIS in PDF/A}
-\label{PDF}
-
-Elektronsko verzijo diplome morate oddati v PDF/A formatu~\cite{pdfa} preko sistema STUDIS.
-Natančneje v PDF/A-1b formatu. 
-
-\LaTeX\ in omenjeni format imata še nekaj težav s sobivanjem. 
-Paket \texttt{pdfx.sty}, ki naj bi \LaTeX{u} omogočal podporo PDF/A formatu ne deluje v skladu s pričakovanji. 
-Ta predloga delno ustreza formatu, vsekakor dovolj, da jo študentski informacijski sistem sprejme. 
-Znaten del rešitve je prispeval Damjan Cvetan.
-
-V predlogi, poleg izvornega \texttt{.tex} dokumenta in vloženih slik \texttt{pic1.pdf} in \texttt{pic2.png}, potrebujemo še predlogo datoteke z metapodatki \texttt{pdfa-1b.xmp} in datoteko z barvnim profilom \texttt{sRGBIEC1966-2.1.icm}.
-
-
-
-
-\chapter{Sklepne ugotovitve}
-
-Uporaba \LaTeX{a} in \BibTeX{a} je v okviru Diplomskega seminarja \textbf{obvezna}!
-Izbira \LaTeX\ ali ne \LaTeX\ pri pisanju dejanske diplomske naloge pa je pre\-pu\-šče\-na dogovoru med vami in vašim mentorjem.
-
-Res je, da so prvi koraki v \LaTeX{}u težavni. 
-Ta dokument naj vam služi kot začetna opora pri hoji.
-
-Vsem raziskovalcem s področja računalništva pa svetujem v branje mnenje L. Fortnowa~\cite{fortnow2009viewpoint}.
 
 \newpage
 \ \\
