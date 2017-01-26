@@ -283,6 +283,24 @@ Glavna podatkovna struktura programa je $ptica$. $ptica$ zajema vse podatke ki s
 Serijska implementacija potrebuje kot vhodni podatek le število ptic. Glede na število ptic se ustvari ustrezno velika $jata$.
 
 %TODO Dodaj tabelo meritev%
+\begin{table}[]
+\centering
+\label{serijske_meritve}
+\begin{tabular}{|lllll}
+\cline{1-3}
+\multicolumn{1}{|l|}{Velikost jate} & \multicolumn{1}{l|}{Serijski algoritem {[}FPS{]}} & \multicolumn{1}{l|}{Serijski algoritem z mrežo{[}FPS{]}} &  &  \\ \cline{1-3}
+100                                 & 653.222                                           & 1533.090                                                 &  &  \\
+200                                 & 526.485                                           & 1347.730                                                 &  &  \\
+300                                 & 390.755                                           & 1096.380                                                 &  &  \\
+400                                 & 276.068                                           & 922.016                                                  &  &  \\
+500                                 & 194.607                                           & 774.890                                                  &  &  \\
+600                                 & 149.196                                           & 658.868                                                  &  &  \\
+700                                 & 120.471                                           & 537.585                                                  &  &  \\
+800                                 & 100.174                                           & 465.814                                                  &  &  \\
+900                                 & 84.070                                            & 441.535                                                  &  & 
+\end{tabular}
+\caption{Meritve serijskega algoritma}
+\end{table}
 %TODO Dodaj graf meritev%
 
 \begin{figure}[t]
