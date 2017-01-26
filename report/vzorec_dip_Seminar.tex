@@ -282,26 +282,7 @@ Glavna podatkovna struktura programa je $ptica$. $ptica$ zajema vse podatke ki s
 
 Serijska implementacija potrebuje kot vhodni podatek le število ptic. Glede na število ptic se ustvari ustrezno velika $jata$.
 
-%TODO Dodaj tabelo meritev%
-\begin{table}[]
-\centering
-\label{serijske_meritve}
-\begin{tabular}{|lllll}
-\cline{1-3}
-\multicolumn{1}{|l|}{Velikost jate} & \multicolumn{1}{l|}{Serijski algoritem {[}FPS{]}} & \multicolumn{1}{l|}{Serijski algoritem z mrežo{[}FPS{]}} &  &  \\ \cline{1-3}
-100                                 & 653.222                                           & 1533.090                                                 &  &  \\
-200                                 & 526.485                                           & 1347.730                                                 &  &  \\
-300                                 & 390.755                                           & 1096.380                                                 &  &  \\
-400                                 & 276.068                                           & 922.016                                                  &  &  \\
-500                                 & 194.607                                           & 774.890                                                  &  &  \\
-600                                 & 149.196                                           & 658.868                                                  &  &  \\
-700                                 & 120.471                                           & 537.585                                                  &  &  \\
-800                                 & 100.174                                           & 465.814                                                  &  &  \\
-900                                 & 84.070                                            & 441.535                                                  &  & 
-\end{tabular}
-\caption{Meritve serijskega algoritma}
-\end{table}
-%TODO Dodaj graf meritev%
+Ker rezultat vsake iteracije tudi izrišemo na ekran smo se oločili, da bo glavna merska enota število okvirjev na sekundo (ang. Frames per second). Rezulati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Ker smo bili nad rezultati nekoliko razočarani smo se odločili algoritem pohitriti z mrežo.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{flocking_simulation_demo}
@@ -311,18 +292,45 @@ Serijska implementacija potrebuje kot vhodni podatek le število ptic. Glede na 
 \end{figure}
 
 \section{Implementacija z mrežo}
-Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem pohitrimo. To smo naredili z implementacijo nove podatkovne strukture mreža (ang. Grid). Iz popravljene psevdokode \ref{serial_grid_pseudo_code} algorirma je razvidno, da se vsako iteracijo ptice najprej razporedi v mrežo na to pa se izračunajo nova stanja ptic. Mreža je ilustrirana na Sliki~\ref{img:flocking_simulation_grid}. Velikost celice je določena z doložino lokalnosti. To je maksimalna razdalja med pticama ki še vedno vplivata druga na drugo. Za računanje novih stanj ptic v neki celici so tako potrebne le ptice v isti in sosednjih celicah. Uporabi se 8-kratna sosednost.
+Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem pohitrimo. To smo naredili z implementacijo nove podatkovne strukture mreža (ang. Grid). Iz popravljene psevdokode \ref{serial_grid_pseudo_code} algorirma je razvidno, da se vsako iteracijo ptice najprej razporedi v mrežo na to pa se izračunajo nova stanja ptic. Mreža je ilustrirana na Sliki~\ref{img:flocking_simulation_grid}. Velikost celice je določena z doložino lokalnosti. To je maksimalna razdalja med pticama ki še vedno vplivata druga na drugo. Za računanje novih stanj ptic v neki celici so tako potrebne le ptice v isti in sosednjih celicah. Uporabi se 8-kratna sosednost. Tako znatno pohitrimo izvajanje algoritma saj ni več potrebno iskati lokalnih ptic.
+
+Rezultati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Algoritem z mrežo je opazno hitrejši. Pri 1000 pticah je algoritem z mrežo skoraj 6 krat hitrejši. Meritve so vizualizirane na Slika~\ref{img:graf_serial_alg}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{flocking_simulation_grid}
-\caption{Ilustracija mrežne. Za računanje nove pozicije se uporabi 8-kratna sosednjost. To pomeni, da se za izračun novi stanj ptic v celici $e$ upurabijo ptice iz celic $a, b, c, d, e, f, g, h, i$}
+\caption{Ilustracija mrežne. Za računanje nove pozicije se uporabi 8-kratna sosednjost. To pomeni, da se za izračun novi stanj ptic v celici $e$ uporabijo ptice iz celic $a, b, c, d, e, f, g, h, i$}
 \label{img:flocking_simulation_grid}
 \centering
 \end{figure}
 
-%TODO Vstvi tabelo meritev%
-%TODO Vstavi graf meritev%
-%TODO Vstavi graf primerjave med navadno in grid%
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Velikost jate} & \textbf{Serijski algoritem {[}FPS{]}} & \textbf{Serijski algoritem z mrežo{[}FPS{]}} \\ \hline
+100 & 653,222 & 1533,090 \\
+200 & 526,485 & 1347,730 \\
+300 & 390,755 & 1096,380 \\
+400 & 276,068 & 922,016 \\
+500 & 194,607 & 774,890 \\
+600 & 149,196 & 658,868 \\
+700 & 120,471 & 537,585 \\
+800 & 100,174 & 465,814 \\
+900 & 84.070 & 441,535 \\
+1000 & 71,061 & 419,116 \\ \hline
+\end{tabular}%
+}
+\caption{Primerjava števila okvirjev na sekundo (ang. Frames per second) v odvisnosti od velikosti jate za serijski algoritem in serijski algoritem z mrežo}
+\label{tabela_meritev_serijskih_alg}
+\end{table}
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{graf_serial_alg}
+\caption{Graf primerja število okvirjev na sekundo za serijski algoritem z in brez mreže v odvisnosti od velikosti jate.}
+\label{img:graf_serial_alg}
+\centering
+\end{figure}
 
 \begin{algorithm}
 \caption{Groba psevdo koda serijskega algoritma z uporabo mreže}\label{serial_grid_pseudo_code}
@@ -344,6 +352,28 @@ Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem poh
 \chapter{Paralelna implementacija z uporabo pThreads}
 \label{ch2}
 TODO...
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l|l|lll|lll|lll|}
+\cline{2-11}
+ & \multicolumn{1}{c|}{\textbf{Serijski}} & \multicolumn{3}{c|}{\textbf{pThreads - 2 niti}} & \multicolumn{3}{c|}{\textbf{pThreads - 4 niti}} & \multicolumn{3}{c|}{\textbf{pThreads - 8 niti}} \\ \cline{1-1}
+\multicolumn{1}{|l|}{\textbf{Velikost jate}} & FPS & FPS & Pohitritev & Učinkovitos & FPS & Pohitritev & Učinkovitos & FPS & Pohitritev & Učinkovitos \\ \hline
+\multicolumn{1}{|l|}{1000} & 419,12 & 401,96 & 0,96 & 0,48 & 437,63 & 1,04 & 0,26 & 409,84 & 0,98 & 0,12 \\
+\multicolumn{1}{|l|}{1200} & 354,73 & 349,46 & 0,99 & 0,49 & 379,77 & 1,07 & 0,27 & 363,85 & 1,03 & 0,13 \\
+\multicolumn{1}{|l|}{1400} & 296,02 & 311,61 & 1,05 & 0,53 & 312,54 & 1,06 & 0,26 & 331,14 & 1,12 & 0,14 \\
+\multicolumn{1}{|l|}{1600} & 249,40 & 274,55 & 1,10 & 0,55 & 258,45 & 1,04 & 0,26 & 270,84 & 1,09 & 0,14 \\
+\multicolumn{1}{|l|}{1800} & 216,03 & 242,16 & 1,12 & 0,56 & 232,21 & 1,07 & 0,27 & 225,42 & 1,04 & 0,13 \\
+\multicolumn{1}{|l|}{2000} & 186,09 & 217,36 & 1,17 & 0,58 & 210,56 & 1,13 & 0,28 & 204,04 & 1,10 & 0,14 \\
+\multicolumn{1}{|l|}{2200} & 163,80 & 195,88 & 1,20 & 0,60 & 191,45 & 1,17 & 0,29 & 184,85 & 1,13 & 0,14 \\
+\multicolumn{1}{|l|}{2400} & 143,49 & 170,23 & 1,19 & 0,59 & 177,42 & 1,24 & 0,31 & 169,70 & 1,18 & 0,15 \\
+\multicolumn{1}{|l|}{2600} & 129,57 & 146,25 & 1,13 & 0,56 & 160,77 & 1,24 & 0,31 & 155,48 & 1,20 & 0,15 \\
+\multicolumn{1}{|l|}{2800} & 116,04 & 134,75 & 1,16 & 0,58 & 147,77 & 1,27 & 0,32 & 143,54 & 1,24 & 0,15 \\ \hline
+\end{tabular}%
+}
+\caption{My caption}
+\label{my-label}
+\end{table}
 
 \chapter{Paralelna implementacija z uporabo OpenMP}
 \label{ch3}
