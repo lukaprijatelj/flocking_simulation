@@ -249,11 +249,11 @@
 \pagestyle{fancy}
 
 \chapter{Uvod}
-Za temo seminarske naloge pri predmetu smo si izbrali simulacijo jate ptic(ang. Flockin simulation).
+Za temo seminarske naloge pri predmetu smo si izbrali simulacijo jate ptic(ang. Flocking simulation).
 
-Vsako iteracijo je potrebno izračunati novo pozicijo za vsako ptico glede na bližnje ptice. Nova pozicija se izračuna glede na 3 preprosta pravila. Ta pravila so ločenost (angl. Separation), usmerjenost (angl. Allignment) in povezanost (angl. Cohesion). Pravilo ločenosti skrbi, da ptice ne letijo pre blizu druga drugi. Pravilo usmerjenosti poskrbi, da ptice v jati letijo v isto smer. Pravilo povezanosti pa poskrbi, da se ptice držijo v jati in ne odletijo vsaka v svojo smer. Stanje vsake ptice je opisano z štirimi komponentami - vektor pozicije (X in Y koordinati) ter vektor smeri oz. hitrosti (X in Y koordinati). 
+Vsako iteracijo je potrebno izračunati novo pozicijo za vsako ptico glede na bližnje ptice. Nova pozicija se izračuna glede na 3 preprosta pravila. Ta pravila so ločenost (angl. Separation), usmerjenost (angl. Allignment) in povezanost (angl. Cohesion). Pravilo ločenosti skrbi, da ptice ne letijo preblizu druga drugi. Pravilo usmerjenosti poskrbi, da ptice v jati letijo v isto smer. Pravilo povezanosti pa poskrbi, da se ptice držijo v jati in ne odletijo vsaka v svojo smer. Stanje vsake ptice je opisano z štirimi komponentami - vektor pozicije (X in Y koordinati) ter vektor smeri oz. hitrosti (X in Y koordinati). 
 
-Iz grobe psevdokode \ref{serial_pseudo_code} algortma je razvidno, da je osnovna serijska implementacija zelo enostavna. Vsako iteracijo se, glede na trenutno stanje, izračuna novo stanje. Novo stanje za vsako ptico se izračuna le glede na lokalne ptice. To so ptice, ki so znotraj določenega radija oddaljenosti od ptice za katero računamo novo stanje. Iskanje lokalnih ptic ima $O(N)$ časovno zahtevnost kjer je $N$ enak številu vseh ptic v jati. Računanje novega stanje za določeno ptico pa ima časovno zahtevnost enako $O(M)$. Tu je $M$ enak številu lokalnih ptic, ki pa ni nikoli večje od $N$ tako, da je časovna zahtevnost računanja novega stanja za določeno ptico prav tako $O(N)$. Novo stanje pa je potrebno izračunati za vse ptice v jati tako, da je časovna zahtevnost celotnega problema enaka $O(N^2)$. 
+Iz grobe psevdokode \ref{serial_pseudo_code} algoritma je razvidno, da je osnovna serijska implementacija zelo enostavna. Vsako iteracijo se, glede na trenutno stanje, izračuna novo stanje. Novo stanje za vsako ptico se izračuna le glede na lokalne ptice. To so ptice, ki so znotraj določenega radija oddaljenosti od ptice za katero računamo novo stanje. Iskanje lokalnih ptic ima $O(N)$ časovno zahtevnost, kjer je $N$ enak številu vseh ptic v jati. Računanje novega stanje za določeno ptico pa ima časovno zahtevnost enako $O(M)$. Tu je $M$ enak številu lokalnih ptic, ki pa ni nikoli večje od $N$ tako, da je časovna zahtevnost računanja novega stanja za določeno ptico prav tako $O(N)$. Novo stanje pa je potrebno izračunati za vse ptice v jati tako, da je časovna zahtevnost celotnega problema enaka $O(N^2)$. 
 
 Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranimo le dve tabeli ptic ki jih vsako iteracijo zamenjamo. Prostorska zahtevnost algorima
 \begin{algorithm}
@@ -276,13 +276,13 @@ Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranim
 \chapter{Serijska implementacija}
 \label{ch1}
 \section{Osnovna implementacija}
-Razvoj osnovne implementacije ni predstavljal večjih izzivov. Za razvoj smo uporabili Microsoftov Visual Studio 2015 integrirano razvojno okolje, ki se je izkazalo za zelo koristno, posebno pri odpravljanju hroščev. Nekoliko težav smo imeli le z grafičnim izrisovanjem jate ptic. Saj smo se avtorji tokrat privič srečali z grafično knjižnico OpenGL. Poleg OpenGL smo uporabili še GLFW knižnjico , ki poskrbi za kreiranje grafičnega okna. Končen rezulatat je prikazan na Sliki~\ref{img:flocking_simulation_demo}. Po približno 10 sekundah leta so se ptice, iz popolnoma naključnih pozicij združile v jate.
+Razvoj osnovne implementacije ni predstavljal večjih izzivov. Za razvoj smo uporabili Microsoftov Visual Studio 2015 integrirano razvojno okolje, ki se je izkazalo za zelo koristno, posebno pri odpravljanju hroščev. Nekoliko težav smo imeli le z grafičnim izrisovanjem jate ptic. Saj smo se avtorji tokrat privič srečali z grafično knjižnico OpenGL. Poleg OpenGL smo uporabili še GLFW knižnjico, ki poskrbi za kreiranje grafičnega okna. Končen rezulatat je prikazan na Sliki~\ref{img:flocking_simulation_demo}. Po približno 10 sekundah leta so se ptice, iz popolnoma naključnih pozicij združile v jate.
 
 Glavna podatkovna struktura programa je $ptica$. $ptica$ zajema vse podatke ki so potrebni za opis ene ptice v prostoru. To sta torej dva dvo-dimenzionalna vektorja $pozicija$ in $smer$. Struktura $jata$ pa združi vse ptice v tabelo $ptic$.
 
 Serijska implementacija potrebuje kot vhodni podatek le število ptic. Glede na število ptic se ustvari ustrezno velika $jata$.
 
-Ker rezultat vsake iteracije tudi izrišemo na ekran smo se oločili, da bo glavna merska enota število okvirjev na sekundo (ang. Frames per second). Rezulati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Ker smo bili nad rezultati nekoliko razočarani smo se odločili algoritem pohitriti z mrežo.
+Ker rezultat vsake iteracije tudi izrišemo na ekran smo se oločili, da bo glavna merska enota število okvirjev na sekundo (ang. Frames per second). Rezultati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Ker smo bili nad rezultati nekoliko razočarani smo se odločili algoritem pohitriti z mrežo.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{flocking_simulation_demo}
@@ -292,7 +292,7 @@ Ker rezultat vsake iteracije tudi izrišemo na ekran smo se oločili, da bo glav
 \end{figure}
 
 \section{Implementacija z mrežo}
-Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem pohitrimo. To smo naredili z implementacijo nove podatkovne strukture mreža (ang. Grid). Iz popravljene psevdokode \ref{serial_grid_pseudo_code} algorirma je razvidno, da se vsako iteracijo ptice najprej razporedi v mrežo na to pa se izračunajo nova stanja ptic. Mreža je ilustrirana na Sliki~\ref{img:flocking_simulation_grid}. Velikost celice je določena z doložino lokalnosti. To je maksimalna razdalja med pticama ki še vedno vplivata druga na drugo. Za računanje novih stanj ptic v neki celici so tako potrebne le ptice v isti in sosednjih celicah. Uporabi se 8-kratna sosednost. Tako znatno pohitrimo izvajanje algoritma saj ni več potrebno iskati lokalnih ptic.
+Zaradi relativno poraznih rezultatov smo se odločili, da serijski algoritem pohitrimo. To smo naredili z implementacijo nove podatkovne strukture mreža (ang. Grid). Iz popravljene psevdokode \ref{serial_grid_pseudo_code} algoritma je razvidno, da se vsako iteracijo ptice najprej razporedi v mrežo na to pa se izračunajo nova stanja ptic. Mreža je ilustrirana na Sliki~\ref{img:flocking_simulation_grid}. Velikost celice je določena z doložino lokalnosti. To je maksimalna razdalja med pticama, ki še vedno vplivata druga na drugo. Za računanje novih stanj ptic v neki celici so tako potrebne le ptice v isti in sosednjih celicah. Uporabi se 8-kratna sosednost. Tako znatno pohitrimo izvajanje algoritma saj ni več potrebno iskati lokalnih ptic.
 
 Rezultati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Algoritem z mrežo je opazno hitrejši. Pri 1000 pticah je algoritem z mrežo skoraj 6 krat hitrejši. Meritve so vizualizirane na Slika~\ref{img:graf_serial_alg}
 
@@ -381,7 +381,7 @@ TODO...
 
 \chapter{Paralelna implementacija z uporabo OpenCL}
 \label{ch4}
-TODO...
+Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celotno računanje. Nato smo uporabili knjižnici pThread in OpenMP. Ti dve knjižnici nam omogočata ustvarjanje in upravljanje z nitmi. Tako smo imeli na testnih računalnikih lahko 2, 4 in 8 niti, ki so znatno pohitrile čas računanja. Nato pa je sledila še knjižnica OpenCL. OpenCL je knjižnica, ki lahko zažene program na grafični kartici. To je v našem primeru pomenilo, da smo lahko 8 niti zamenjali z 640 delovnimi elementi. Seveda se arhitektura grafične kartice zelo razlikuje od arhitekture procesorja, vendar pa v našem primeru skorajda ne potrebujemo komunikacije med nitmi in to je področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se je zelo dobro pokazalo pri večjem številu ptic.
 
 \chapter{Paralelna implementacija z uporabo MPI}
 \label{ch5}
