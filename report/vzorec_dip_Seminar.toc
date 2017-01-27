@@ -8,5 +8,5 @@
 \contentsline {chapter}{\numberline {3}Paralelna implementacija z uporabo pThreads}{7}{chapter.3}
 \contentsline {chapter}{\numberline {4}Paralelna implementacija z uporabo OpenMP}{9}{chapter.4}
 \contentsline {chapter}{\numberline {5}Paralelna implementacija z uporabo OpenCL}{11}{chapter.5}
-\contentsline {chapter}{\numberline {6}Paralelna implementacija z uporabo MPI}{13}{chapter.6}
-\contentsline {chapter}{Literatura}{15}{table.6.1}
+\contentsline {chapter}{\numberline {6}Paralelna implementacija z uporabo MPI}{15}{chapter.6}
+\contentsline {chapter}{Literatura}{18}{figure.6.1}
