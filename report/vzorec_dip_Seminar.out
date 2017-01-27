@@ -6,5 +6,8 @@
 \BOOKMARK [0][-]{chapter.3}{Paralelna implementacija z uporabo pThreads}{}% 6
 \BOOKMARK [0][-]{chapter.4}{Paralelna implementacija z uporabo OpenMP}{}% 7
 \BOOKMARK [0][-]{chapter.5}{Paralelna implementacija z uporabo OpenCL}{}% 8
-\BOOKMARK [0][-]{chapter.6}{Paralelna implementacija z uporabo MPI}{}% 9
-\BOOKMARK [0][-]{figure.6.1}{Literatura}{}% 10
+\BOOKMARK [1][-]{section.5.1}{Kratek opis}{chapter.5}% 9
+\BOOKMARK [1][-]{section.5.2}{Dodatne pohitritve}{chapter.5}% 10
+\BOOKMARK [1][-]{section.5.3}{Primerjava}{chapter.5}% 11
+\BOOKMARK [0][-]{chapter.6}{Paralelna implementacija z uporabo MPI}{}% 12
+\BOOKMARK [0][-]{figure.6.1}{Literatura}{}% 13
