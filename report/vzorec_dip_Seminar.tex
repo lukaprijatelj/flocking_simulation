@@ -409,12 +409,31 @@ Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_pthreads}. Razberem
 
 \chapter{Paralelna implementacija z uporabo OpenMP}
 \label{ch3}
-TODO...
+Naslednja paralelna implementacija uporabla OpenMP za nitenje. Zaradi narave OpenMP-ja je bilo ta algoritem najlažje implementirati. Kot izhodišče smo spet uporabili serijski algoritem z mrežo. Kot je moč razbrati iz psevdokode~\ref{openmp_pseudo_code} je bila za implementacijo potrebna le ena pragma. Tu smo probali tudi z paralelizacijo notranje zanke, toraj tiste znotraj funnkicje novoStanje, ki iterira čez lokalne ptice. Ampak se je taka implementacija izkazala za veliko počasnejšo tako, da smo uporabili to z le eno pragmo.
+
+Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_openmp}. Tako kot prejšne meritve so bile izmerjene na prenosnem računalniku z \textit{Intel i7 – 5500U 2.40GHz} procesorjem in \textit{16GB} pomnilnika. Meritve so vizualizirane v grafu na Slika~\ref{img:graf_pthreads}. Rezultati so nekoliko slabši od pThreads algoritma. Pri osmih nitih nam celo ni uspelo doseči pohitritve. Vsaj ne pri izmerjenih velikosti jat. Se pa je pohitritev, tako kot pri pThreads implementaciji, večala z velikostjo jate tako, da bi pohitritev dosegli pri večji jati ptic. Pri dveh in štirih nitih pa je OpenMP popolnoma primerljiv z pThreads implementacijo.
+
+\begin{algorithm}
+\caption{Groba psevdo koda paralelnega OpenMP algoritma}\label{openmp_pseudo_code}
+\begin{algorithmic}[1]
+\State $N \gets \text{Stevilo ptic}$
+\State $trenutnoStanje \gets \textit{ptice[N]}$
+\State $naslendjeStanje \gets \textit{ptice[N]}$
+\Loop
+\State $mrezaPtic \gets$ razporediPticeVMrezo($trenutnoStanje);$
+\State \#pragma omp parallel for
+\For{$i \gets 0; i < N; i++$}
+\State $naslendjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], mrezaPtic);$
+\EndFor
+\State izrisiStanje(naslendjeStanje);
+\State $trenutnoStanje \gets naslendjeStanje;$
+\EndLoop
+\end{algorithmic}
+\end{algorithm}
 
 \begin{table}[]
 \centering
-\caption{My caption}
-\label{my-label}
+\label{tabela_meritev_openmp}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{l|l|lll|lll|lll|}
 \cline{2-11}
@@ -432,29 +451,27 @@ TODO...
 \multicolumn{1}{|l|}{2800} & 116,038 & 130,722 & 1,127 & 0,563 & 118,434 & 1,021 & 0,255 & 113,196 & 0,976 & 0,122 \\ \hline
 \end{tabular}%
 }
+\caption{Meritve za OpenMP paralelni algoritem. FPS predstvlja število okvirjev na sekundo, S predstavlja pohitritev, E pa predstavlja učinkovitos.}
 \end{table}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_openmp}
-\caption{TODO...}
+\caption{Graf primerja paralelni OpenMP algoritem z serijskim algorimom v odvisnosti od velikosti jate.}
 \label{img:graf_openmp}
 \centering
 \end{figure}
 
 \chapter{Paralelna implementacija z uporabo OpenCL}
 \label{ch4}
-\section{Kratek opis}
 Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celotno računanje. Nato smo uporabili knjižnici pThread in OpenMP. Ti dve knjižnici sta nam omogočili ustvarjanje in upravljanje z nitmi. Tako smo imeli na testnih računalnikih lahko 2, 4 in 8 niti, ki so znatno pohitrile čas računanja. Nato pa je sledila še knjižnica OpenCL. OpenCL je knjižnica, ki lahko prevede in požene program na grafični kartici. To je v našem primeru pomenilo, da smo lahko 8 niti zamenjali z 640 delovnimi elementi (nitmi). Seveda se arhitektura grafične kartice zelo razlikuje od arhitekture procesorja in zato procesorske niti ne moremo enačiti z nitmi na grafični kartici. Procesorska arhitektura namreč omogoča izvrševanje ukazov v zaporednem vrstnem redu. Ta arhitektura je v primerjavi z arhitekturo grafične kartice čisto drugačna. Grafična kartica namreč deluje tako, da vsako njeno jedro vzporedno z drugimi jedri izvršuje ukaze. 
 
-\section{Dodatne pohitritve}
 Na začetku vsakega računanja na grafični kartici, se podatki morajo vedno prenesejo iz glavnega pomninika na pomnilnik grafične kartice. To lahko pri večjem številu ptic zelo upočasni čas računanja. Da bi pohitrili prenašanje podatkov, smo se odločili, da podatke prenesemo le enkrat. To se zgodi ob prvi iteraciji, ko zaženemo program na grafični kartici. Ko se prva iteracija konča, grafična kartica prenese rezultate v glavni pomnilnik, svoje podatke pa obdrži v svojem pomnilniku. Tako lahko za naslednjo iteracijo uporabi kar svoje stare podatke in jih ne potrebuje ponovno prenašati iz glavnega pomnilnika.
 
-\section{Primerjava}
-Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične kartice, je to področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se še posebno lepo pokaže pri večjem številu ptic. To lahko opazimo v Tabeli~\ref{tabela_meritev_opencl} ali pa na Sliki~\ref{img:graf_opencl}.
+Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične kartice, je to področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se še posebno lepo pokaže pri večjem številu ptic. To lahko opazimo v Tabeli~\ref{tabela_meritev_opencl} ali pa na Sliki~\ref{img:graf_opencl}. Pri 2800 pticah smo dosegli kar 3,36 kratno pohitritev. Kar je največja pohitritev, ki smo jo uspeli doseči s katerokoli arhitekturo.
 
 \begin{table}[]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{8cm}{!}{%
 \begin{tabular}{l|l|lll|}
 \cline{2-5}
  & \multicolumn{1}{c|}{\textbf{Serijski}} & \multicolumn{3}{c|}{\textbf{OpenCL - 640 niti}} \\ \cline{1-1}
@@ -471,7 +488,7 @@ Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične ka
 \multicolumn{1}{|l|}{2800} & 116,0380 & 390,0000 & 3,3610 & 0,0053 \\ \hline
 \end{tabular}%
 }
-\caption{Primerjava števila okvirjev na sekundo (ang. Frames per second) v odvisnosti od velikosti jate za serijski algoritem z mrežo in OpenCL algoritmom}
+\caption{Primerjava števila okvirjev na sekundo (ang. Frames per second) v odvisnosti od velikosti jate za serijski algoritem in OpenCL algoritmom}
 \label{tabela_meritev_opencl}
 \end{table}
 
@@ -517,9 +534,6 @@ TODO...
 \centering
 \end{figure}
 
-
-\newpage
-\ \\
 \clearpage
 \addcontentsline{toc}{chapter}{Literatura}
 \bibliographystyle{plain}
