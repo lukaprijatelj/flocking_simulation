@@ -1,3 +1,4 @@
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % datoteka diploma-vzorec.tex
 %
@@ -240,6 +241,7 @@ Vsako iteracijo je potrebno izračunati novo pozicijo za vsako ptico glede na bl
 Iz grobe psevdokode \ref{serial_pseudo_code} algoritma je razvidno, da je osnovna serijska implementacija zelo enostavna. Vsako iteracijo se, glede na trenutno stanje, izračuna novo stanje. Novo stanje za vsako ptico se izračuna le glede na lokalne ptice. To so ptice, ki so znotraj določenega radija oddaljenosti od ptice za katero računamo novo stanje. Iskanje lokalnih ptic ima $O(N)$ časovno zahtevnost, kjer je $N$ enak številu vseh ptic v jati. Računanje novega stanje za določeno ptico pa ima časovno zahtevnost enako $O(M)$. Tu je $M$ enak številu lokalnih ptic, ki pa ni nikoli večje od $N$ tako, da je časovna zahtevnost računanja novega stanja za določeno ptico prav tako $O(N)$. Novo stanje pa je potrebno izračunati za vse ptice v jati tako, da je časovna zahtevnost celotnega problema enaka $O(N^2)$. 
 
 Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranimo le dve tabeli ptic, ki jih vsako iteracijo zamenjamo. Prostorska zahtevnost algorima je torej $O(N)$.
+
 \begin{algorithm}
 \caption{Groba psevdo koda serijskega algoritma}\label{serial_pseudo_code}
 \begin{algorithmic}[1]
