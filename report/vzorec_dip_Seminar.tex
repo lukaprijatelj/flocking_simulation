@@ -443,12 +443,17 @@ TODO...
 
 \chapter{Paralelna implementacija z uporabo OpenCL}
 \label{ch4}
-Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celotno računanje. Nato smo uporabili knjižnici pThread in OpenMP. Ti dve knjižnici nam omogočata ustvarjanje in upravljanje z nitmi. Tako smo imeli na testnih računalnikih lahko 2, 4 in 8 niti, ki so znatno pohitrile čas računanja. Nato pa je sledila še knjižnica OpenCL. OpenCL je knjižnica, ki lahko zažene program na grafični kartici. To je v našem primeru pomenilo, da smo lahko 8 niti zamenjali z 640 delovnimi elementi. Seveda se arhitektura grafične kartice zelo razlikuje od arhitekture procesorja, vendar pa v našem primeru skorajda ne potrebujemo komunikacije med nitmi in to je področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se je zelo dobro pokazalo pri večjem številu ptic.
+\section{Kratek opis}
+Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celotno računanje. Nato smo uporabili knjižnici pThread in OpenMP. Ti dve knjižnici sta nam omogočili ustvarjanje in upravljanje z nitmi. Tako smo imeli na testnih računalnikih lahko 2, 4 in 8 niti, ki so znatno pohitrile čas računanja. Nato pa je sledila še knjižnica OpenCL. OpenCL je knjižnica, ki lahko prevede in požene program na grafični kartici. To je v našem primeru pomenilo, da smo lahko 8 niti zamenjali z 640 delovnimi elementi (nitmi). Seveda se arhitektura grafične kartice zelo razlikuje od arhitekture procesorja in zato procesorske niti ne moremo enačiti z nitmi na grafični kartici. Procesorska arhitektura namreč omogoča izvrševanje ukazov v zaporednem vrstnem redu. Ta arhitektura je v primerjavi z arhitekturo grafične kartice čisto drugačna. Grafična kartica namreč deluje tako, da vsako njeno jedro vzporedno z drugimi jedri izvršuje ukaze. 
+
+\section{Dodatne pohitritve}
+Na začetku vsakega računanja na grafični kartici, se podatki morajo vedno prenesejo iz glavnega pomninika na pomnilnik grafične kartice. To lahko pri večjem številu ptic zelo upočasni čas računanja. Da bi pohitrili prenašanje podatkov, smo se odločili, da podatke prenesemo le enkrat. To se zgodi ob prvi iteraciji, ko zaženemo program na grafični kartici. Ko se prva iteracija konča, grafična kartica prenese rezultate v glavni pomnilnik, svoje podatke pa obdrži v svojem pomnilniku. Tako lahko za naslednjo iteracijo uporabi kar svoje stare podatke in jih ne potrebuje ponovno prenašati iz glavnega pomnilnika.
+
+\section{Primerjava}
+Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične kartice, je to področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se še posebno lepo pokaže pri večjem številu ptic. To lahko opazimo v Tabeli~\ref{tabela_meritev_opencl} ali pa na Sliki~\ref{img:graf_opencl}.
 
 \begin{table}[]
 \centering
-\caption{My caption}
-\label{my-label}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{l|l|lll|}
 \cline{2-5}
@@ -466,11 +471,14 @@ Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celot
 \multicolumn{1}{|l|}{2800} & 116,0380 & 390,0000 & 3,3610 & 0,0053 \\ \hline
 \end{tabular}%
 }
+\caption{Primerjava števila okvirjev na sekundo (ang. Frames per second) v odvisnosti od velikosti jate za serijski algoritem z mrežo in OpenCL algoritmom}
+\label{tabela_meritev_opencl}
 \end{table}
+
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_opencl}
-\caption{TODO...}
+\caption{Graf primerja število okvirjev na sekundo za serijski algoritem z mrežo in OpenCL algoritmom v odvisnosti od velikosti jate.}
 \label{img:graf_opencl}
 \centering
 \end{figure}
@@ -505,7 +513,7 @@ TODO...
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_mpi}
 \caption{TODO...}
-\label{img:graf_opencl}
+\label{img:graf_mpi}
 \centering
 \end{figure}
 
