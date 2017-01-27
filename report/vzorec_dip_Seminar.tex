@@ -247,14 +247,14 @@ Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranim
 \begin{algorithmic}[1]
 \State $N \gets \text{Stevilo ptic}$
 \State $trenutnoStanje \gets \textit{ptice[N]}$
-\State $naslendjeStanje \gets \textit{ptice[N]}$
+\State $naslednjeStanje \gets \textit{ptice[N]}$
 \Loop
 \For{$i \gets 0; i < N; i++$}
 \State $lokalnePtice \gets$ poisciLokalnePtice($trenutnoStanje[i], trenutnoStanje);$
-\State $naslendjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], lokalnePtice);$
+\State $naslednjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], lokalnePtice);$
 \EndFor
-\State izrisiStanje(naslendjeStanje);
-\State $trenutnoStanje \gets naslendjeStanje;$
+\State izrisiStanje(naslednjeStanje);
+\State $trenutnoStanje \gets naslednjeStanje;$
 \EndLoop
 \end{algorithmic}
 \end{algorithm}
@@ -323,14 +323,14 @@ Rezultati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Alg
 \begin{algorithmic}[1]
 \State $N \gets \text{Stevilo ptic}$
 \State $trenutnoStanje \gets \textit{ptice[N]}$
-\State $naslendjeStanje \gets \textit{ptice[N]}$
+\State $naslednjeStanje \gets \textit{ptice[N]}$
 \Loop
 \State $mrezaPtic \gets$ razporediPticeVMrezo($trenutnoStanje);$
 \For{$i \gets 0; i < N; i++$}
-\State $naslendjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], mrezaPtic);$
+\State $naslednjeStanje[i] \gets$ novoStanje($trenutnoStanje[i], mrezaPtic);$
 \EndFor
-\State izrisiStanje(naslendjeStanje);
-\State $trenutnoStanje \gets naslendjeStanje;$
+\State izrisiStanje(naslednjeStanje);
+\State $trenutnoStanje \gets naslednjeStanje;$
 \EndLoop
 \end{algorithmic}
 \end{algorithm}
@@ -505,7 +505,7 @@ Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične ka
 \label{ch5}
 Kot zadnjo tehnologijo za nitenje smo uporabil MPI. Na začetku vsake iteracije ničti procesor pošlje tabelo vseh ptic vsem procesorjem v gruči. Vsak procesor si nato izračuna mrežo ter izračuna nove pozicije za svoje ptice. Svoj del seveda poračuna tudi ničti procesor. Nato vsi procesorji pošljejo tabelo ptic z novimi pozicijami ničtemu procesorju. Pošljejo se le ptice, ki jim je dani procesor izračunal novo pozicijo. Tako nekoliko prihranimo na komunikaciji. Ničti procesor združi posamezne tabele ptic v skupno tabelo. To skupno tabelo ob naslednji iteraciji spet pošlje vsem procesorjem za izračun novih pozicij. Če program zaganjamo lokalno je moč vključiti grafični izris. V tem primeru ničti procesor odpre grafično okno in skrbi za izris ptic vsako iteracijo.
 
-Meritve izvedene na istem osebnem računalniku kot meritve za prejšne tehnologije so tabelirane v Tabela~\ref{tabela_meritev_mpi}. Uspelo nam je doseči pohitritev a so bile te najslabše od vseh uporabljenih tehnologij. To pripusujemo predvsem večji komunikaciji saj je to prva tehnologija kjer niti ne komunicirajo prek skupnega pomnilnika. Dodatno se nekaj časa izgubi pri pretvarjanju podatkov. Namreč nemoremo pošiljati tabele struktur $ptica$. Tako moramo vsako ptico pretvoriti v tabelo float števi, ki natančno opšejo stanje ptic (v našem primeru so potrebne štiri float števila). Na strani prejemnika pa je to tabelo števil potrebno pretvoriti nazaj v tabelo struktur $ptica$.
+Meritve izvedene na istem osebnem računalniku kot meritve za prejšne tehnologije so tabelirane v Tabela~\ref{tabela_meritev_mpi}. Uspelo nam je doseči pohitritev, a so bile te najslabše od vseh uporabljenih tehnologij. To pripisujemo predvsem večji komunikaciji saj je to prva tehnologija kjer niti ne komunicirajo prek skupnega pomnilnika. Dodatno se nekaj časa izgubi pri pretvarjanju podatkov. Namreč nemoremo pošiljati tabele struktur $ptica$. Tako moramo vsako ptico pretvoriti v tabelo float števil, ki natančno opišejo stanje ptic (v našem primeru so potrebne štiri float števila). Na strani prejemnika pa je to tabelo števil potrebno pretvoriti nazaj v tabelo struktur $ptica$.
 
 
 \begin{table}[]
