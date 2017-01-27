@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.3.28)  27 JAN 2017 11:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.3.28)  27 JAN 2017 12:52
 entering extended mode
 **./vzorec_dip_Seminar.tex
 (vzorec_dip_Seminar.tex
@@ -430,7 +430,7 @@ LaTeX Warning: Label `my-label' multiply defined.
 LaTeX Warning: Label `my-label' multiply defined.
 
 
-LaTeX Warning: Label `my-label' multiply defined.
+LaTeX Warning: Label `img:graf_opencl' multiply defined.
 
 )
 \openout1 = `vzorec_dip_Seminar.aux'.
@@ -695,129 +695,145 @@ Poglavje 3.
 Package babel Info: Redefining slovene shorthand "|
 (babel)             in language  on input line 352.
 
-LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 355.
+("C:\Users\gaspermiha\AppData\Local\Programs\MiKTeX 2.9\tex\latex\ucs\uni-32.de
+f"
+File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
+)
 
-<images/graf_pthreads.png, id=129, 735.49782pt x 417.81094pt>
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 380.
+
+<images/graf_pthreads.png, id=132, 735.49782pt x 417.81094pt>
 File: images/graf_pthreads.png Graphic file (type png)
 
 <use images/graf_pthreads.png>
-Package pdftex.def Info: images/graf_pthreads.png used on input line 379.
+Package pdftex.def Info: images/graf_pthreads.png used on input line 404.
 (pdftex.def)             Requested size: 390.0pt x 221.5535pt.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 385.
+(babel)             in language  on input line 410.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 385.
+(babel)             in language  on input line 410.
  [7
 
 ]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 385.
+(babel)             in language  on input line 410.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 385.
- [8 <./images/graf_pthreads.png>]
+(babel)             in language  on input line 410.
+ [8]
+Package babel Info: Redefining slovene shorthand "|
+(babel)             in language  on input line 410.
+Package babel Info: Redefining slovene shorthand "|
+(babel)             in language  on input line 410.
+ [9 <./images/graf_pthreads.png>]
+Package babel Info: Redefining slovene shorthand "|
+(babel)             in language  on input line 410.
+Package babel Info: Redefining slovene shorthand "|
+(babel)             in language  on input line 410.
+
+[10
+
+]
 Poglavje 4.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 385.
+(babel)             in language  on input line 410.
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 389.
+               Default added (so using `tbp') on input line 414.
 
-<images/graf_openmp.png, id=141, 726.46407pt x 419.31656pt>
+<images/graf_openmp.png, id=153, 726.46407pt x 419.31656pt>
 File: images/graf_openmp.png Graphic file (type png)
 
 <use images/graf_openmp.png>
-Package pdftex.def Info: images/graf_openmp.png used on input line 413.
+Package pdftex.def Info: images/graf_openmp.png used on input line 438.
 (pdftex.def)             Requested size: 390.0pt x 225.11592pt.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 419.
+(babel)             in language  on input line 444.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 419.
- [9
-
-]
+(babel)             in language  on input line 444.
+ [11]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 419.
+(babel)             in language  on input line 444.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 419.
- [10 <./images/graf_openmp.png>]
+(babel)             in language  on input line 444.
+ [12 <./images/graf_openmp.png>]
 Poglavje 5.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 419.
+(babel)             in language  on input line 444.
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 423.
+               Default added (so using `tbp') on input line 448.
 
-<images/graf_opencl.png, id=152, 968.86969pt x 417.81094pt>
+<images/graf_opencl.png, id=164, 968.86969pt x 417.81094pt>
 File: images/graf_opencl.png Graphic file (type png)
 
 <use images/graf_opencl.png>
-Package pdftex.def Info: images/graf_opencl.png used on input line 447.
+Package pdftex.def Info: images/graf_opencl.png used on input line 472.
 (pdftex.def)             Requested size: 390.0pt x 168.1797pt.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
+(babel)             in language  on input line 478.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
- [11
+(babel)             in language  on input line 478.
+ [13
 
 ]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
+(babel)             in language  on input line 478.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
- [12]
+(babel)             in language  on input line 478.
+ [14]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
+(babel)             in language  on input line 478.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
- [13 <./images/graf_opencl.png>]
+(babel)             in language  on input line 478.
+ [15 <./images/graf_opencl.png>]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
+(babel)             in language  on input line 478.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
- [14
+(babel)             in language  on input line 478.
+ [16
 
 ]
 Poglavje 6.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 453.
+(babel)             in language  on input line 478.
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 457.
+               Default added (so using `tbp') on input line 482.
 
-<images/graf_mpi.png, id=172, 727.21687pt x 362.10281pt>
+<images/graf_mpi.png, id=184, 727.21687pt x 362.10281pt>
 File: images/graf_mpi.png Graphic file (type png)
 
 <use images/graf_mpi.png>
-Package pdftex.def Info: images/graf_mpi.png used on input line 481.
+Package pdftex.def Info: images/graf_mpi.png used on input line 506.
 (pdftex.def)             Requested size: 390.0pt x 194.19548pt.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 488.
+(babel)             in language  on input line 513.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 488.
- [15]
-Underfull \hbox (badness 10000) in paragraph at lines 489--490
+(babel)             in language  on input line 513.
+ [17]
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 
  []
 
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 490.
+(babel)             in language  on input line 515.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 490.
-[16]
+(babel)             in language  on input line 515.
+[18]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 490.
+(babel)             in language  on input line 515.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 490.
- [17 <./images/graf_mpi.png>]
+(babel)             in language  on input line 515.
+ [19 <./images/graf_mpi.png>]
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 491.
+(babel)             in language  on input line 516.
  (vzorec_dip_Seminar.bbl
 Package babel Info: Redefining slovene shorthand "|
 (babel)             in language  on input line 1.
 Package babel Info: Redefining slovene shorthand "|
 (babel)             in language  on input line 1.
- [18
+ [20
 
 
 ]
@@ -834,36 +850,30 @@ Package babel Info: Redefining slovene shorthand "|
 (babel)             in language  on input line 49.
 Package babel Info: Redefining slovene shorthand "|
 (babel)             in language  on input line 49.
-[19])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 496.
+[21])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 521.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 496.
+(babel)             in language  on input line 521.
 Package babel Info: Redefining slovene shorthand "|
-(babel)             in language  on input line 496.
- [20]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 496.
+(babel)             in language  on input line 521.
+ [22]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 521.
  (vzorec_dip_Seminar.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 496.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 496.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 521.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 521.
+Package rerunfilecheck Info: File `vzorec_dip_Seminar.out' has not changed.
+(rerunfilecheck)             Checksum: 17384C619A29CFD99AB0E3DAABFBC7B7;640.
 
-
-Package rerunfilecheck Warning: File `vzorec_dip_Seminar.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `vzorec_dip_Seminar.out':
-(rerunfilecheck)             Before: 63DD4AE7B984F3E68C6E65FCEF301C02;639
-(rerunfilecheck)             After:  17384C619A29CFD99AB0E3DAABFBC7B7;640.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 496.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 521.
  ) 
 Here is how much of TeX's memory you used:
- 8938 strings out of 493634
- 127190 string characters out of 3133199
- 232170 words of memory out of 3000000
- 12114 multiletter control sequences out of 15000+200000
+ 9194 strings out of 493634
+ 130148 string characters out of 3133199
+ 236503 words of memory out of 3000000
+ 12364 multiletter control sequences out of 15000+200000
  13192 words of font info for 48 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  31i,12n,43p,932b,601s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -881,9 +891,9 @@ miha/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pf
 b><C:/Users/gaspermiha/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/ams
 fonts/cm/cmti12.pfb><C:/Users/gaspermiha/AppData/Local/Programs/MiKTeX 2.9/font
 s/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on vzorec_dip_Seminar.pdf (26 pages, 295927 bytes).
+Output written on vzorec_dip_Seminar.pdf (28 pages, 302001 bytes).
 PDF statistics:
- 265 PDF objects out of 1000 (max. 8388607)
- 57 named destinations out of 1000 (max. 500000)
+ 277 PDF objects out of 1000 (max. 8388607)
+ 60 named destinations out of 1000 (max. 500000)
  120 words of extra memory for PDF output out of 10000 (max. 10000000)
 
