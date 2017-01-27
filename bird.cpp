@@ -4,6 +4,10 @@
 
 Bird::Bird(Dimension win) 
 {
+	MAX_SPEED = 2.0 / 15;
+	MAX_FORCE = 0.03 / 10;
+	BIRD_RADIUS = 5.0f;
+
 	window_dimensions = win;
 
 	position = Vector();
@@ -17,6 +21,10 @@ Bird::Bird(Dimension win)
 }
 
 Bird::Bird(Dimension win, float pos_x, float pos_y, float vel_x, float vel_y) {
+	MAX_SPEED = 2.0 / 15;
+	MAX_FORCE = 0.03 / 10;
+	BIRD_RADIUS = 5.0f;
+
 	window_dimensions = win;
 
 	position = Vector(pos_x, pos_y);

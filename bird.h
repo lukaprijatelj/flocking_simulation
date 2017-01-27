@@ -19,9 +19,9 @@
 class Bird
 {
 public:
-	float MAX_SPEED = 2.0 / 15;
-	float MAX_FORCE = 0.03 / 10;
-	float BIRD_RADIUS = 5.0f;  // Radius of the bird (I have choose MAX point of bird triangle points)
+	float MAX_SPEED;
+	float MAX_FORCE;
+	float BIRD_RADIUS;  // Radius of the bird (I have choose MAX point of bird triangle points)
 
 	// Properties
 	Vector position;
@@ -32,7 +32,7 @@ public:
 	Dimension window_dimensions;
 
 	Bird(Dimension);
-	Bird::Bird(Dimension, float, float, float, float);
+	Bird(Dimension, float, float, float, float);
 	~Bird();
 
 	// General

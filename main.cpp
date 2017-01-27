@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &num_of_processes);
 
 	// Runtime variables 
-	uint64_t loop_couner = 0;			// Loop counter
-	uint64_t iteration_count = 3000;	// Number of iterations to run
+	long loop_couner = 0;			// Loop counter
+	long iteration_count = 3000;	// Number of iterations to run
 	float max_runtime = 100.0f;			// The max number of seconds the program is allowed to run
 
 	// Prepare local variables
@@ -76,6 +76,8 @@ int main(int argc, char *argv[]) {
 	// Prepare table of bird data nums
 	int table_size = flock_size * bird_num_of_floats;
 	float *bird_data = new float[table_size];
+
+	printf("Hello");
 
 	// Generate and randomize bird positions
 	if (my_rank == 0) {
@@ -155,6 +157,9 @@ int main(int argc, char *argv[]) {
 		float avg_fps = (1.0f / (float(clock() - begin_time) / CLOCKS_PER_SEC / loop_couner));
 		printf("Avg FPS: %f\n", avg_fps);
 		fflush(stdout);
+		
+		int i;
+		cin >> i;
 	}
 
 	// Clear MPI

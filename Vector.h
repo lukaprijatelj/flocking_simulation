@@ -10,8 +10,8 @@ public:
 	~Vector();
 
 	float length();
-	float x = 0;
-	float y = 0;
+	float x;
+	float y;
 
 	void normalize(float);
 	void subtract(Vector);
