@@ -224,23 +224,7 @@
 \clearemptydoublepage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% povzetek
-\addcontentsline{toc}{chapter}{Povzetek}
-\chapter*{Povzetek}
-
-\noindent\textbf{Naslov:} \ttitle
-\bigskip
-
-\noindent\textbf{Avtor:} \tauthor
-\bigskip
-
-%\noindent\textbf{Povzetek:} 
-\noindent V vzorcu je predstavljen postopek priprave diplomskega dela z uporabo okolja \LaTeX. Vaš povzetek mora sicer vsebovati približno 100 besed, ta tukaj je odločno prekratek.
-\bigskip
-
-\noindent\textbf{Ključne besede:} \tkeywords.
-% prazna stran
-\clearemptydoublepage
+% povzete
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,7 +239,7 @@ Vsako iteracijo je potrebno izračunati novo pozicijo za vsako ptico glede na bl
 
 Iz grobe psevdokode \ref{serial_pseudo_code} algoritma je razvidno, da je osnovna serijska implementacija zelo enostavna. Vsako iteracijo se, glede na trenutno stanje, izračuna novo stanje. Novo stanje za vsako ptico se izračuna le glede na lokalne ptice. To so ptice, ki so znotraj določenega radija oddaljenosti od ptice za katero računamo novo stanje. Iskanje lokalnih ptic ima $O(N)$ časovno zahtevnost, kjer je $N$ enak številu vseh ptic v jati. Računanje novega stanje za določeno ptico pa ima časovno zahtevnost enako $O(M)$. Tu je $M$ enak številu lokalnih ptic, ki pa ni nikoli večje od $N$ tako, da je časovna zahtevnost računanja novega stanja za določeno ptico prav tako $O(N)$. Novo stanje pa je potrebno izračunati za vse ptice v jati tako, da je časovna zahtevnost celotnega problema enaka $O(N^2)$. 
 
-Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranimo le dve tabeli ptic ki jih vsako iteracijo zamenjamo. Prostorska zahtevnost algorima
+Iz psevdokode \ref{serial_pseudo_code} se prav tako vidi, da v pomnilniku hranimo le dve tabeli ptic, ki jih vsako iteracijo zamenjamo. Prostorska zahtevnost algorima je torej $O(N)$.
 \begin{algorithm}
 \caption{Groba psevdo koda serijskega algoritma}\label{serial_pseudo_code}
 \begin{algorithmic}[1]
@@ -351,9 +335,9 @@ Rezultati meritev so tabelirani v Tabela~\ref{tabela_meritev_serijskih_alg}. Alg
 
 \chapter{Paralelna implementacija z uporabo pThreads}
 \label{ch2}
-Prva paralelna implementacija algoritma uporablja pThreads za nitenje. Kot izhodišče za implementacijo smo uporabili serijski algoritem z mrežo. Implementacija je grobo opisana v psevdokodi \ref{paralel_pthreads_pseudo_code}. Vsako iteraciji glavna nit ptice razporedi v mrežo. Nato pa se ustvarijo posamezne niti, ki izračunajo novo stanje jate. Komunikacije med nitmi ni potrebna saj vsaka nit dobi podatke o vseh pticah v jati. Ko niti kočnajo računanje se pridružijo glavni niti, da ta izriše novo stanje na ekran.
+Prva paralelna implementacija algoritma uporablja pThreads za nitenje. Kot izhodišče za implementacijo smo uporabili serijski algoritem z mrežo. Implementacija je grobo opisana v psevdokodi \ref{paralel_pthreads_pseudo_code}. V vsaki iteraciji glavna nit ptice razporedi v mrežo. Nato pa se ustvarijo posamezne niti, ki izračunajo novo stanje jate. Komunikacije med nitmi ni potrebna saj vsaka nit dobi podatke o vseh pticah v jati. Ko niti končajo računanje se pridružijo glavni niti, da ta izriše novo stanje na ekran.
 
-Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_pthreads}. Razberemo lahko, da smo z paralelizacijo dosegli pohitritev. Ta je bila največja pri štirih nitih in se je večala z številom ptic. Učinkovitost se je prav tako večala z število ptic a je bila ta največja pri dveh nitih. Razlog za to je najverjetneja strojna oprema saj ima procesor le 2 jedri. Meritve smo izvajali na prenosnem računalniki z \textit{Intel i7 – 5500U 2.40GHz} procesorjem in \textit{16GB} pomnilnika. Meritve so vizualizirane v grafu na Slika~\ref{img:graf_pthreads}.
+Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_pthreads}. Razberemo lahko, da smo z paralelizacijo dosegli pohitritev. Ta je bila največja pri štirih nitih in se je večala z številom ptic. Učinkovitost se je prav tako večala z število ptic a je bila ta največja pri dveh nitih. Razlog za to je najverjetneje strojna oprema saj ima procesor le 2 jedri. Meritve smo izvajali na prenosnem računalniki z \textit{Intel i7 – 5500U 2.40GHz} procesorjem in \textit{16GB} pomnilnika. Meritve so vizualizirane v grafu na Slika~\ref{img:graf_pthreads}.
 
 \begin{algorithm}
 \caption{Groba psevdo koda paralelnega algoritma z uporabo pThreads}\label{paralel_pthreads_pseudo_code}
@@ -402,16 +386,16 @@ Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_pthreads}. Razberem
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_pthreads}
-\caption{Graf primerja paralelni pThreads algoritem z serijskim algorimom v odvisnosti od velikosti jate.}
+\caption{Graf primerja paralelni pThreads algoritem z serijskim algoritmom v odvisnosti od velikosti jate.}
 \label{img:graf_pthreads}
 \centering
 \end{figure}
 
 \chapter{Paralelna implementacija z uporabo OpenMP}
 \label{ch3}
-Naslednja paralelna implementacija uporabla OpenMP za nitenje. Zaradi narave OpenMP-ja je bilo ta algoritem najlažje implementirati. Kot izhodišče smo spet uporabili serijski algoritem z mrežo. Kot je moč razbrati iz psevdokode~\ref{openmp_pseudo_code} je bila za implementacijo potrebna le ena pragma. Tu smo probali tudi z paralelizacijo notranje zanke, toraj tiste znotraj funnkicje novoStanje, ki iterira čez lokalne ptice. Ampak se je taka implementacija izkazala za veliko počasnejšo tako, da smo uporabili to z le eno pragmo.
+Naslednja paralelna implementacija uporablja OpenMP za nitenje. Zaradi narave OpenMP-ja je bil ta algoritem najlažje implementirati. Kot izhodišče smo zopet uporabili serijski algoritem z mrežo. Kot je moč razbrati iz psevdokode~\ref{openmp_pseudo_code} je bila za implementacijo potrebna le ena pragma. Tu smo poizkusili tudi z paralelizacijo notranje zanke, torej tiste znotraj funkcije novoStanje, ki iterira čez lokalne ptice. Taka implementacija se je žal izkazala za veliko počasnejšo, tako da smo uporabili to z le eno pragmo.
 
-Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_openmp}. Tako kot prejšne meritve so bile izmerjene na prenosnem računalniku z \textit{Intel i7 – 5500U 2.40GHz} procesorjem in \textit{16GB} pomnilnika. Meritve so vizualizirane v grafu na Slika~\ref{img:graf_pthreads}. Rezultati so nekoliko slabši od pThreads algoritma. Pri osmih nitih nam celo ni uspelo doseči pohitritve. Vsaj ne pri izmerjenih velikosti jat. Se pa je pohitritev, tako kot pri pThreads implementaciji, večala z velikostjo jate tako, da bi pohitritev dosegli pri večji jati ptic. Pri dveh in štirih nitih pa je OpenMP popolnoma primerljiv z pThreads implementacijo.
+Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_openmp}. Tako kot prejšne meritve so bile tudi te izmerjene na prenosnem računalniku z \textit{Intel i7 – 5500U 2.40GHz} procesorjem in \textit{16GB} pomnilnika. Meritve so vizualizirane v grafu na Slika~\ref{img:graf_pthreads}. Rezultati so nekoliko slabši od pThreads algoritma. Pri osmih nitih nam celo ni uspelo doseči pohitritve - vsaj ne pri izmerjenih velikostih jat. Se pa je pohitritev, tako kot pri pThreads implementaciji, večala z velikostjo jate tako, da bi pohitritev dosegli pri večji jati ptic. Pri dveh in štirih nitih pa je OpenMP popolnoma primerljiv z pThreads implementacijo.
 
 \begin{algorithm}
 \caption{Groba psevdo koda paralelnega OpenMP algoritma}\label{openmp_pseudo_code}
@@ -451,12 +435,12 @@ Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_openmp}. Tako kot p
 \multicolumn{1}{|l|}{2800} & 116,038 & 130,722 & 1,127 & 0,563 & 118,434 & 1,021 & 0,255 & 113,196 & 0,976 & 0,122 \\ \hline
 \end{tabular}%
 }
-\caption{Meritve za OpenMP paralelni algoritem. FPS predstvlja število okvirjev na sekundo, S predstavlja pohitritev, E pa predstavlja učinkovitos.}
+\caption{Meritve za OpenMP paralelni algoritem. FPS predstavlja število okvirjev na sekundo, S predstavlja pohitritev, E pa predstavlja učinkovitost.}
 \end{table}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_openmp}
-\caption{Graf primerja paralelni OpenMP algoritem z serijskim algorimom v odvisnosti od velikosti jate.}
+\caption{Graf primerja paralelni OpenMP algoritem z serijskim algoritmom v odvisnosti od velikosti jate.}
 \label{img:graf_openmp}
 \centering
 \end{figure}
@@ -465,9 +449,24 @@ Meritve algoritma so tabelirane v Tabela~\ref{tabela_meritev_openmp}. Tako kot p
 \label{ch4}
 Pri serijskem algoritmu smo imeli na voljo 1 nit, ki je bila zadolžena za celotno računanje. Nato smo uporabili knjižnici pThread in OpenMP. Ti dve knjižnici sta nam omogočili ustvarjanje in upravljanje z nitmi. Tako smo imeli na testnih računalnikih lahko 2, 4 in 8 niti, ki so znatno pohitrile čas računanja. Nato pa je sledila še knjižnica OpenCL. OpenCL je knjižnica, ki lahko prevede in požene program na grafični kartici. To je v našem primeru pomenilo, da smo lahko 8 niti zamenjali z 640 delovnimi elementi (nitmi). Seveda se arhitektura grafične kartice zelo razlikuje od arhitekture procesorja in zato procesorske niti ne moremo enačiti z nitmi na grafični kartici. Procesorska arhitektura namreč omogoča izvrševanje ukazov v zaporednem vrstnem redu. Ta arhitektura je v primerjavi z arhitekturo grafične kartice čisto drugačna. Grafična kartica namreč deluje tako, da vsako njeno jedro vzporedno z drugimi jedri izvršuje ukaze. 
 
-Na začetku vsakega računanja na grafični kartici, se podatki morajo vedno prenesejo iz glavnega pomninika na pomnilnik grafične kartice. To lahko pri večjem številu ptic zelo upočasni čas računanja. Da bi pohitrili prenašanje podatkov, smo se odločili, da podatke prenesemo le enkrat. To se zgodi ob prvi iteraciji, ko zaženemo program na grafični kartici. Ko se prva iteracija konča, grafična kartica prenese rezultate v glavni pomnilnik, svoje podatke pa obdrži v svojem pomnilniku. Tako lahko za naslednjo iteracijo uporabi kar svoje stare podatke in jih ne potrebuje ponovno prenašati iz glavnega pomnilnika.
+OpenCL algoritem je bil najtežji za implementacijo saj je bilo potrebno prepisati večino algoritma v ščepec (ang. Kernel), ki teče na grafifični kartici. Na začetku vsakega računanja na grafični kartici, se podatki morajo vedno prenesejo iz glavnega pomninika na pomnilnik grafične kartice. To lahko pri večjem številu ptic zelo upočasni čas računanja. Da bi pohitrili prenašanje podatkov, smo se odločili, da podatke prenesemo le enkrat. To se zgodi ob prvi iteraciji, ko zaženemo program na grafični kartici. Ko se prva iteracija konča, grafična kartica prenese rezultate v glavni pomnilnik, svoje podatke pa obdrži v svojem pomnilniku. Tako lahko za naslednjo iteracijo uporabi kar svoje stare podatke in jih ne potrebuje ponovno prenašati iz glavnega pomnilnika.
 
 Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične kartice, je to področje kjer se grafična kartica zelo dobro izkaže. Hitrost računanja grafične kartice je bila mnogo hitrejša od računanja na procesorju, kar se še posebno lepo pokaže pri večjem številu ptic. To lahko opazimo v Tabeli~\ref{tabela_meritev_opencl} ali pa na Sliki~\ref{img:graf_opencl}. Pri 2800 pticah smo dosegli kar 3,36 kratno pohitritev. Kar je največja pohitritev, ki smo jo uspeli doseči s katerokoli arhitekturo.
+
+\begin{algorithm}
+\caption{Groba psevdo koda paralelnega OpenCL algoritma}\label{opencl_pseudo_code}
+\begin{algorithmic}[1]
+\State $N \gets \text{Stevilo ptic}$
+\State $trenutnoStanje \gets \textit{ptice[N]}$
+\State $naslednjeStanje \gets \textit{ptice[N]}$
+\State buildKernel();
+\Loop
+\State runKernel($trenutnoStanje$);
+\State getResults($naslednjeStanje$);
+\State izrisiStanje(naslednjeStanje);
+\EndLoop
+\end{algorithmic}
+\end{algorithm}
 
 \begin{table}[]
 \centering
@@ -493,7 +492,7 @@ Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične ka
 \end{table}
 
 
-\begin{figure}[t]
+\begin{figure}[]
 \includegraphics[width=\textwidth]{graf_opencl}
 \caption{Graf primerja število okvirjev na sekundo za serijski algoritem z mrežo in OpenCL algoritmom v odvisnosti od velikosti jate.}
 \label{img:graf_opencl}
@@ -502,13 +501,15 @@ Ker v našem primeru skorajda ne potrebujemo komunikacije med jedri grafične ka
 
 \chapter{Paralelna implementacija z uporabo MPI}
 \label{ch5}
-TODO...
+Kot zadnjo tehnologijo za nitenje smo uporabil MPI. Na začetku vsake iteracije ničti procesor pošlje tabelo vseh ptic vsem procesorjem v gruči. Vsak procesor si nato izračuna mrežo ter izračuna nove pozicije za svoje ptice. Svoj del seveda poračuna tudi ničti procesor. Nato vsi procesorji pošljejo tabelo ptic z novimi pozicijami ničtemu procesorju. Pošljejo se le ptice, ki jim je dani procesor izračunal novo pozicijo. Tako nekoliko prihranimo na komunikaciji. Ničti procesor združi posamezne tabele ptic v skupno tabelo. To skupno tabelo ob naslednji iteraciji spet pošlje vsem procesorjem za izračun novih pozicij. Če program zaganjamo lokalno je moč vključiti grafični izris. V tem primeru ničti procesor odpre grafično okno in skrbi za izris ptic vsako iteracijo.
+
+Meritve izvedene na istem osebnem računalniku kot meritve za prejšne tehnologije so tabelirane v Tabela~\ref{tabela_meritev_mpi}. Uspelo nam je doseči pohitritev a so bile te najslabše od vseh uporabljenih tehnologij. To pripusujemo predvsem večji komunikaciji saj je to prva tehnologija kjer niti ne komunicirajo prek skupnega pomnilnika. Dodatno se nekaj časa izgubi pri pretvarjanju podatkov. Namreč nemoremo pošiljati tabele struktur $ptica$. Tako moramo vsako ptico pretvoriti v tabelo float števi, ki natančno opšejo stanje ptic (v našem primeru so potrebne štiri float števila). Na strani prejemnika pa je to tabelo števil potrebno pretvoriti nazaj v tabelo struktur $ptica$.
+
 
 \begin{table}[]
 \centering
-\caption{My caption}
-\label{my-label}
-\resizebox{\textwidth}{!}{%
+\label{tabela_meritev_mpi}
+\resizebox{10cm}{!}{%
 \begin{tabular}{l|l|lll|lll|}
 \cline{2-8}
  & \multicolumn{1}{c|}{\textbf{Serijski}} & \multicolumn{3}{c|}{\textbf{MPI - 2 niti}} & \multicolumn{3}{c|}{\textbf{MPI - 4 niti}} \\ \cline{1-1}
@@ -525,20 +526,17 @@ TODO...
 \multicolumn{1}{|l|}{2800} & 116,04 & 137,38 & 1,18 & 0,59 & 128,19 & 1,10 & 0,28 \\ \hline
 \end{tabular}%
 }
+\caption{Meritve za MPI paralelni algoritem. FPS predstavlja število okvirjev na sekundo, S predstavlja pohitritev, E pa predstavlja učinkovitost.}
 \end{table}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{graf_mpi}
-\caption{TODO...}
+\caption{Graf primerja paralelni MPI algoritem z serijskim algoritmom v odvisnosti od velikosti jate.}
 \label{img:graf_mpi}
 \centering
 \end{figure}
 
 \clearpage
-\addcontentsline{toc}{chapter}{Literatura}
-\bibliographystyle{plain}
-\bibliography{literatura}
-
 
 \end{document}
 

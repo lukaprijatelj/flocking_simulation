@@ -1,10 +1,8 @@
-\BOOKMARK [0][-]{chapter*.1}{Povzetek}{}% 1
-\BOOKMARK [0][-]{chapter.1}{Uvod}{}% 2
-\BOOKMARK [0][-]{chapter.2}{Serijska implementacija}{}% 3
-\BOOKMARK [1][-]{section.2.1}{Osnovna implementacija}{chapter.2}% 4
-\BOOKMARK [1][-]{section.2.2}{Implementacija z mre\236o}{chapter.2}% 5
-\BOOKMARK [0][-]{chapter.3}{Paralelna implementacija z uporabo pThreads}{}% 6
-\BOOKMARK [0][-]{chapter.4}{Paralelna implementacija z uporabo OpenMP}{}% 7
-\BOOKMARK [0][-]{chapter.5}{Paralelna implementacija z uporabo OpenCL}{}% 8
-\BOOKMARK [0][-]{chapter.6}{Paralelna implementacija z uporabo MPI}{}% 9
-\BOOKMARK [0][-]{figure.6.1}{Literatura}{}% 10
+\BOOKMARK [0][-]{chapter.1}{Uvod}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Serijska implementacija}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Osnovna implementacija}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Implementacija z mre\236o}{chapter.2}% 4
+\BOOKMARK [0][-]{chapter.3}{Paralelna implementacija z uporabo pThreads}{}% 5
+\BOOKMARK [0][-]{chapter.4}{Paralelna implementacija z uporabo OpenMP}{}% 6
+\BOOKMARK [0][-]{chapter.5}{Paralelna implementacija z uporabo OpenCL}{}% 7
+\BOOKMARK [0][-]{chapter.6}{Paralelna implementacija z uporabo MPI}{}% 8

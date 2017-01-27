@@ -1,6 +1,5 @@
 \select@language {english}
 \select@language {slovene}
-\contentsline {chapter}{Povzetek}{}{chapter*.1}
 \contentsline {chapter}{\numberline {1}Uvod}{1}{chapter.1}
 \contentsline {chapter}{\numberline {2}Serijska implementacija}{3}{chapter.2}
 \contentsline {section}{\numberline {2.1}Osnovna implementacija}{3}{section.2.1}
@@ -9,4 +8,3 @@
 \contentsline {chapter}{\numberline {4}Paralelna implementacija z uporabo OpenMP}{11}{chapter.4}
 \contentsline {chapter}{\numberline {5}Paralelna implementacija z uporabo OpenCL}{15}{chapter.5}
 \contentsline {chapter}{\numberline {6}Paralelna implementacija z uporabo MPI}{19}{chapter.6}
-\contentsline {chapter}{Literatura}{21}{figure.6.1}
